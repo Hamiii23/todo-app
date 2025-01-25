@@ -4,10 +4,9 @@ const {todo} = require('./db');
 const {createTodo, updateTodo} = require('./types');
 app.use(express.json())
 
-app.get('/todos', (req, res) => {
-    res.json({
-        message: "Hamii"
-    })
+app.get('/get-todos', async (req, res) => {
+    const response = await todo.find();
+    res.json(response)
 });
 
 app.post('/add-todo', async (req, res) => {
