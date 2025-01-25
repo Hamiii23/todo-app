@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const {todo} = require('./db');
 const {createTodo, updateTodo} = require('./types');
+app.use(express.json())
 
 app.get('/todos', (req, res) => {
     res.json({
@@ -9,8 +10,24 @@ app.get('/todos', (req, res) => {
     })
 });
 
-app.post('/add-todo', (req, res) => {
-
+app.post('/add-todo', async (req, res) => {
+    const userTodo = req.body;
+    const parsedTodo = createTodo.safeParse(userTodo);
+    if(!parsedTodo.success) {
+        res.json({
+            error: "wrong inputs"
+        })
+        return;
+    }else {
+        await todo.create({
+            title: userTodo.title,
+            description: userTodo.description,
+            isComplete: false
+        })
+        res.json({
+            msg: "todo created"
+        })
+    }
 });
 
 app.put('/update-todo', (req, res) => {
