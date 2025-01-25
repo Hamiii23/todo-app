@@ -1,9 +1,9 @@
-const {zod} = require('zod');
+const {z} = require('zod');
 
-const todoSchema = zod.object({
-    title: zod.string(),
-    description: zod.string(),
-    isCompleted: zod.boolean()
+const todoSchema = z.object({
+    title: z.string(),
+    description: z.string(),
+    isCompleted: z.boolean()
 });
 
 module.exports = {
