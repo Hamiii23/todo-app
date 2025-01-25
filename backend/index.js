@@ -9,4 +9,16 @@ app.get('/todos', (req, res) => {
     })
 });
 
+app.post('/add-todo', (req, res) => {
+
+});
+
+app.put('/update-todo', (req, res) => {
+    
+})
+
+app.delete('/delete-todo', (req, res ) => {
+
+});
+
 app.listen(3000)
