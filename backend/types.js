@@ -1,11 +1,15 @@
 const {z} = require('zod');
 
-const todoSchema = z.object({
+const createTodo = z.object({
     title: z.string(),
     description: z.string(),
-    isCompleted: z.boolean()
+});
+
+const updateTodo = z.object({
+    id: z.string()
 });
 
 module.exports = {
-    todoSchema
+    createTodo,
+    updateTodo
 }

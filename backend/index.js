@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const {todo} = require('./db');
-const {todoSchema} = require('./types');
+const {createTodo, updateTodo} = require('./types');
 
 app.get('/todos', (req, res) => {
     res.json({
