@@ -30,7 +30,7 @@ app.post('/add-todo', async (req, res) => {
 });
 
 app.put('/completed-todo', async(req, res) => {
-    const completed = req.body;
+    const completed = req.body.id;
     const parsedTodo = completedTodo.safeParse(completed);
     if(!parsedTodo.success) {
         res.status(411).json({
@@ -51,8 +51,25 @@ app.put('/completed-todo', async(req, res) => {
 
 })
 
-app.delete('/delete-todo', (req, res ) => {
+app.delete('/delete-todo', async (req, res ) => {
+    const deleteTodo = req.body;
+    const parsedTodo = completedTodo.safeParse(deleteTodo);
 
+    if(!parsedTodo.success) {
+        res.status(411).json({
+            msg: "wrong inputs"
+        })
+
+        return;
+    }
+
+    await todo.deleteOne({
+        _id: req.body._id
+    })
+
+    res.json({
+        msg: "todo deleted"
+    })
 });
 
 app.listen(3000)
