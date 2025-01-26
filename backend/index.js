@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const {todo} = require('./db');
-const {createTodo, updateTodo} = require('./types');
+const {createTodo, completedTodo} = require('./types');
 app.use(express.json())
 
 app.get('/get-todos', async (req, res) => {
@@ -13,24 +13,42 @@ app.post('/add-todo', async (req, res) => {
     const userTodo = req.body;
     const parsedTodo = createTodo.safeParse(userTodo);
     if(!parsedTodo.success) {
-        res.json({
-            error: "wrong inputs"
+        res.status(411).json({
+            msg: "wrong inputs"
         })
         return;
-    }else {
-        await todo.create({
-            title: userTodo.title,
-            description: userTodo.description,
-            isComplete: false
-        })
-        res.json({
-            msg: "todo created"
-        })
     }
+
+    await todo.create({
+        title: userTodo.title,
+        description: userTodo.description,
+        isComplete: false
+    })
+    res.json({
+        msg: "todo created"
+    })
 });
 
-app.put('/update-todo', (req, res) => {
+app.put('/completed-todo', async(req, res) => {
+    const completed = req.body;
+    const parsedTodo = completedTodo.safeParse(completed);
+    if(!parsedTodo.success) {
+        res.status(411).json({
+            msg: "wrong inputs"
+        })
+        return;
+    }
     
+    await todo.updateOne({
+        _id: req.body.id
+    }, {
+        isComplete: true
+    })
+
+    res.json({
+        msg: "todo marked as done"
+    })
+
 })
 
 app.delete('/delete-todo', (req, res ) => {
