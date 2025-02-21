@@ -1,22 +1,18 @@
-const {z} = require('zod');
+import { z } from "zod";
 
 const createTodo = z.object({
-    title: z.string(),
-    description: z.string(),
+  title: z.string(),
+  description: z.string(),
 });
 
 const completedTodo = z.object({
-    _id: z.string()
+  _id: z.string(),
 });
 
 const updateTodo = z.object({
-    _id: z.string(),
-    title: z.string(),
-    description: z.string()
-})
+  _id: z.string(),
+  title: z.string(),
+  description: z.string(),
+});
 
-module.exports = {
-    createTodo,
-    completedTodo,
-    updateTodo
-}
+export { createTodo, completedTodo, updateTodo };
