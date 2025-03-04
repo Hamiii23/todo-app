@@ -41,8 +41,8 @@ const updateTodo = asyncHandler(async (req, res) => {
   const { title, description, dueDate } = req.body;
 
   if(!todoId) {
-
-  }
+    throw new ApiError(400, "Invalid Todo ID");
+  };
 
   const todo = await Todo.findOne({
     _id: todoId
@@ -87,7 +87,30 @@ const updateTodo = asyncHandler(async (req, res) => {
   );
 });
 
+const deleteTodo = asyncHandler(async (req, res) => {
+  const { todoId } = req.params;
+  
+  if(!todoId) {
+    throw new ApiError(400, "Invalid todo ID");
+  };
+
+  const deletedTodo = await Todo.deleteOne({
+    _id: todoId
+  });
+
+  if(!deletedTodo) {
+    throw new ApiError(500, "Something went wrong while deleting the todo");
+  };
+
+  return res
+  .status(200)
+  .json(
+    new ApiResponse(200, {}, "Todo deleted successfully")
+  );
+});
+
 export { 
   createTodo,
-  updateTodo
+  updateTodo,
+  deleteTodo
 };
