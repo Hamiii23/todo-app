@@ -1,22 +1,22 @@
 import { Todo } from "../models/todo.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { titleType, descType, dueDateType } from "../utils/typeValidation.js";
+import { stringValidator, dateValidator } from "../utils/typeValidation.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 const createTodo = asyncHandler(async (req, res) => {
   const { title, description, dueDate = Date.now().toString() } = req.body;
 
-  if (!titleType.safeParse(title).success) {
+  if (!stringValidator.safeParse(title).success) {
     throw new ApiError(400, "Invalid input type for the title");
   }
 
-  if (!dueDateType.safeParse(dueDate).success) {
+  if (!dateValidator.safeParse(dueDate).success) {
     throw new ApiError(400, "Invalid input for the due date");
   }
 
   if (description) {
-    if (!descType.safeParse(description).success) {
+    if (!stringValidator.safeParse(description).success) {
       throw new ApiError(400, "Invalid input for the description");
     }
   }
@@ -49,7 +49,7 @@ const updateTodo = asyncHandler(async (req, res) => {
   });
 
   if(title) {
-    const validTitle = titleType.safeParse(title);
+    const validTitle = stringValidator.safeParse(title);
 
     if(!validTitle.success) {
       throw new ApiError(400, "Invalid input for the title");
@@ -59,7 +59,7 @@ const updateTodo = asyncHandler(async (req, res) => {
   };
 
   if(description) {
-    const validDesc = descType.safeParse(description);
+    const validDesc = stringValidator.safeParse(description);
     
     if(!validDesc.success) {
       throw new ApiError(400, "Invalid input type for the description");
@@ -69,7 +69,7 @@ const updateTodo = asyncHandler(async (req, res) => {
   };
 
   if(dueDate) {
-    const validDate = dueDateType.safeParse(dueDate);
+    const validDate = dateValidator.safeParse(dueDate);
 
     if(!validDate.success) {
       throw new ApiError(400, "Invalid input type for the date");

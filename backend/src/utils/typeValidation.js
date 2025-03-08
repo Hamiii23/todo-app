@@ -1,7 +1,13 @@
 import { z } from "zod";
 
-const titleType = z.string();
-const dueDateType = z.string().date();
-const descType = z.string();
+const stringValidator = z.string();
+const dateValidator = z.string().date();
+const emailValidator = z.string().email();
+const numberValidator = z.number();
 
-export { titleType, dueDateType, descType };
+export {
+    stringValidator,
+    dateValidator,
+    emailValidator,
+    numberValidator
+};
