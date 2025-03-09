@@ -161,7 +161,6 @@ const loginUser = asyncHandler(async (req, res) => {
         "Logged in successfully"));
 });
 
-
 const logOutUser = asyncHandler(async (req, res) => {
     const user = req.user;
 
@@ -190,8 +189,111 @@ const logOutUser = asyncHandler(async (req, res) => {
     );
 });
 
+const updateUser = asyncHandler(async (req, res) => {
+    const {username, email, name} = req.body;
+
+    const user = req.user;
+
+    const errors = [];
+    
+    if(email) {
+        if(!emailValidator.safeParse(email).success) {
+            errors.push('Invalid Type: Email should be in a string and in a proper format');
+        } else {
+            user.email = email;
+        };
+    };
+
+    if(username) {
+        if(!stringValidator.safeParse(username).success) {
+            errors.push('Invalid Type: Username must be a string');
+        } else {
+            user.username = username;
+        };
+    } ;   
+
+    if(name) {
+        if(!stringValidator.safeParse(name).success) {
+            errors.push('Invalid Type: Name should be a string');
+        } else {
+            user.name = name;
+        };
+    };
+
+    if(errors.length > 0) {
+        throw new ApiError(400, errors);
+    };
+
+    const updatedUser = await user.save({validateBeforeSave: false});
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            updatedUser,
+            'User updated successfully'
+        )
+    );
+});
+
+const getUser = asyncHandler(async (req, res) => {
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200, 
+            req.user, 
+            "User data fetched successfully"
+        )
+    );
+});
+
+const changePassword = asyncHandler( async (req, res) => {
+    const { oldPassword, newPassword, confirmNewPassword} = req.body;
+
+    const user = await User.findById(req.user?._id);
+
+    const errors = [];
+
+    if(!(newPassword == confirmNewPassword)) {
+        errors.push(400, 'New Password and Confirm New Password does not match');
+    };
+
+    if(!passwordValidator.safeParse(newPassword).success) {
+        errors.push('Invalid Type: New Password should be a string and of at least 8 characters');
+    };
+
+    if(!passwordValidator.safeParse(confirmNewPassword).success) {
+        errors.push('Invalid Type: Confirm New Password should be a string and of at least 8 characters');
+    };
+
+
+    if(errors.length > 0) {
+        throw new ApiError(400, errors);
+    };
+
+    const passwordCheck = await user.verifyPassword(oldPassword);
+
+    if(!passwordCheck) {
+        throw new ApiError(400, "Incorrect Old Password");
+    };
+
+    user.password = newPassword;
+    await user.save({validateBeforeSave: false});
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200, {}, 'Password Changed Successfully')
+    );
+});
+
 export {
     registerUser,
     loginUser,
-    logOutUser
+    logOutUser,
+    updateUser,
+    getUser,
+    changePassword
 };

@@ -3,28 +3,40 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { stringValidator, dateValidator } from "../utils/typeValidation.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { User } from "../models/user.model.js";
+import mongoose from "mongoose";
+
 
 const createTodo = asyncHandler(async (req, res) => {
-  const { title, description, dueDate = Date.now().toString() } = req.body;
+  const { title, description, dueDate } = req.body;
 
   if (!stringValidator.safeParse(title).success) {
-    throw new ApiError(400, "Invalid input type for the title");
-  }
+    throw new ApiError(400, "Invalid Type: Invalid input type for the title");
+  };
 
-  if (!dateValidator.safeParse(dueDate).success) {
-    throw new ApiError(400, "Invalid input for the due date");
-  }
+  if(dueDate) {
+    if (!dateValidator.safeParse(dueDate).success) {
+      throw new ApiError(400, "Invalid Type: Invalid input for the due date");
+    };
+  };
 
   if (description) {
     if (!stringValidator.safeParse(description).success) {
-      throw new ApiError(400, "Invalid input for the description");
-    }
-  }
+      throw new ApiError(400, "Invalid Type: Invalid input for the description");
+    };
+  };
 
   const createdTodo = await Todo.create({
     title,
     description: description || null,
     dueDate,
+    owner: req.user._id
+  });
+
+  await User.findByIdAndUpdate(req.user._id, {
+    $push: {
+      todos: createdTodo._id
+    }
   });
 
   if (!createdTodo) {
@@ -109,8 +121,33 @@ const deleteTodo = asyncHandler(async (req, res) => {
   );
 });
 
+const getTodo = asyncHandler(async (req, res) => {
+    const { todoId } = req.params;
+
+    if(!todoId) {
+      throw new ApiError(400, "Invalid Todo ID");
+    };
+
+    const todo = await Todo.findById(todoId);
+
+    if(!todo) {
+      throw new ApiError(500, "Something went wrong while fetching the todo");
+    };
+
+    if(!todo.owner._id.equals(req.user._id)) {
+      throw new ApiError(401, "Unauthorized Request");
+    };
+
+    return res
+    .status(200)
+    .json(
+      new ApiResponse(200, todo, "Todo fetched successfully")
+    )
+});
+
 export { 
   createTodo,
   updateTodo,
-  deleteTodo
+  deleteTodo,
+  getTodo,
 };
