@@ -4,7 +4,6 @@ import { stringValidator, dateValidator } from "../utils/typeValidation.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
-import mongoose from "mongoose";
 
 
 const createTodo = asyncHandler(async (req, res) => {
@@ -106,6 +105,14 @@ const deleteTodo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid todo ID");
   };
 
+  const todo = await Todo.findOne({
+    _id: todoId
+  });
+
+  if(!todo) {
+    throw new ApiError(400, "Todo doesn't exist")
+  };
+
   const deletedTodo = await Todo.deleteOne({
     _id: todoId
   });
@@ -142,7 +149,7 @@ const getTodo = asyncHandler(async (req, res) => {
     .status(200)
     .json(
       new ApiResponse(200, todo, "Todo fetched successfully")
-    )
+    );
 });
 
 export { 

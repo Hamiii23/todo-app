@@ -18,8 +18,10 @@ app.use(cookieParser());
 
 import todoRouter from "./routes/todo.routes.js";
 import userRouter from "./routes/user.routes.js";
+import listRouter from "./routes/list.routes.js";
 
 app.use("/api/v1/todos", todoRouter);
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/lists", listRouter);
 
 export { app };

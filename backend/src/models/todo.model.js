@@ -13,6 +13,10 @@ const todoSchema = new Schema(
     description: {
       type: String,
     },
+    isDone: {
+      type: Boolean,
+      default: false
+    },
     owner: {
       type: Schema.Types.ObjectId,
       ref: "User"
