@@ -55,9 +55,11 @@ const updateTodo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid Todo ID");
   };
 
-  const todo = await Todo.findOne({
-    _id: todoId
-  });
+  const todo = await Todo.findById(todoId);
+
+  if(!todo.owner.equals(req.user._id)) {
+    throw new ApiError(401, "Unauthorized request");
+  };
 
   if(title) {
     const validTitle = stringValidator.safeParse(title);
@@ -105,12 +107,14 @@ const deleteTodo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid todo ID");
   };
 
-  const todo = await Todo.findOne({
-    _id: todoId
-  });
+  const todo = await Todo.findById(todoId);
 
   if(!todo) {
     throw new ApiError(400, "Todo doesn't exist")
+  };
+
+  if(!todo.owner.equals(req.user._id)) {
+    throw new ApiError(401, "Unauthorized request");
   };
 
   const deletedTodo = await Todo.deleteOne({
@@ -144,11 +148,49 @@ const getTodo = asyncHandler(async (req, res) => {
     if(!todo.owner._id.equals(req.user._id)) {
       throw new ApiError(401, "Unauthorized Request");
     };
-
+    
     return res
     .status(200)
     .json(
       new ApiResponse(200, todo, "Todo fetched successfully")
+    );
+});
+
+const toggleTodoCompletion = asyncHandler(async (req, res) => {
+    const { todoId } = req.params;
+
+    if(!todoId) {
+      throw new ApiError(400, "Invalid Todo ID");
+    };
+
+    const todo = await Todo.findById(todoId);
+
+    if(!todo) {
+      throw new ApiError(400, "Todo Doesn't Exist");
+    };
+
+    if(!todo.owner.equals(req.user._id)) {
+      throw new ApiError(401, "Unauthorized request");
+    };
+
+    const changeState = (prevState) => !prevState;
+
+    todo.isDone = changeState(todo.isDone);
+
+    let todoState;
+    
+    if (todo.isDone === true) {
+      todoState = 'complete'
+    } else {
+      todoState = 'incomplete'
+    };
+
+    await todo.save({validateBeforeSave: false});
+
+    return res
+    .status(200)
+    .json(
+      new ApiResponse(200, todo, `Todo is marked as ${todoState}`)
     );
 });
 
@@ -157,4 +199,5 @@ export {
   updateTodo,
   deleteTodo,
   getTodo,
+  toggleTodoCompletion
 };
