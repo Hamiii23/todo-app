@@ -121,7 +121,7 @@ const getList = asyncHandler(async (req, res) => {
     const list = await List.findById(listId);
     
     if(!list) {
-      throw new ApiError(500, "Something went wrong while fetching the list");
+      throw new ApiError(400, "Something went wrong while fetching the list");
     };
     
     if(!list.owner._id.equals(req.user._id)) {
@@ -131,7 +131,7 @@ const getList = asyncHandler(async (req, res) => {
     return res
     .status(200)
     .json(
-      new ApiResponse(200, list, "Todo fetched successfully")
+      new ApiResponse(200, list, `${list.name} fetched successfully`)
     );
 });
 
@@ -156,7 +156,7 @@ const addTodoToList = asyncHandler(async (req, res) => {
     const list = await List.findById(listId);
 
     if(!list) {
-        throw new ApiError(400, "Something went wrong while fetching the List");
+        throw new ApiError(400, "Something went wrong while fetching the list");
     };
     
     const todo = await Todo.findById(todoId);
@@ -164,23 +164,78 @@ const addTodoToList = asyncHandler(async (req, res) => {
     if(!todo) {
         throw new ApiError(400, "Something went wrong while looking for the todo");
     };
+
+    if (list.todos.includes(todo._id)) {
+        throw new ApiError(400, `Todo already exists in the list: ${list.name}`)
+    };
     
-    await List.findByIdAndUpdate(listId, {
+    const updatedList = await List.findByIdAndUpdate(listId, {
         $push: {
             todos: todo._id
         }
+    }, {
+        new: true
     });
+
+    // const updatedList = await List.findById(listId);
 
     return res
     .status(200)
     .json(
-        new ApiResponse(200, list, "Todo successfully added to the list")
+        new ApiResponse(200, updatedList, `Todo successfully added to the list: ${list.name}`)
     );
 });
 
 const removeTodoFromList = asyncHandler(async (req, res) => {
     const { todoId } = req.query;
     const { listId } = req.params;
+
+    const errors = [];
+
+    if(!listId) {
+        errors.push('Invalid List ID');
+    };
+
+    if(!todoId) {
+        errors.push('Invalid Todo ID');
+    };
+
+    if(errors.length > 0) {
+        throw new ApiError(400, errors);
+    };
+
+    const list = await List.findById(listId);
+    
+    if(!list) {
+        throw new ApiError(400, "Something went wrong while fetching the list");
+    };
+    
+    
+    const todo = await Todo.findById(todoId);
+    
+    if(!todo) {
+        throw new ApiError(400, "Something went wrong while looking for the todo");
+    };
+    
+    if (!list.todos.includes(todo._id)) {
+        throw new ApiError(400, `Todo doesn't exist in the list: ${list.name}`)
+    };
+
+    const updatedList = await List.findByIdAndUpdate(listId, {
+        $pull: {
+            todos: todo._id
+        }
+    }, {
+        new: true
+    });
+
+    // const updatedList = await List.findById(listId);
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200, updatedList, `Todo successfully removed to the list: ${list.name}`)
+    );
 });
 
 export {
