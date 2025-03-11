@@ -6,7 +6,7 @@ import {
     updateUser,
     getUser,
     changePassword
-} from "../controllers/user.controllers.js";
+} from "../controllers/user.controller.js";
 import { auth } from '../middlewares/auth.middleware.js';
 
 const router = Router();

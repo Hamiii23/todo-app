@@ -1,4 +1,5 @@
 import { List } from "../models/list.model.js";
+import { Todo } from "../models/todo.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { stringValidator } from "../utils/typeValidation.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -50,6 +51,10 @@ const deleteList = asyncHandler(async (req, res) => {
         throw new ApiError(400, "List doesn't exist")
     };
 
+    if(!list.owner._id.equals(req.user._id)) {
+        throw new ApiError(401, "Unauthorized Request");
+    };
+
     const deletedList = await List.deleteOne({
         _id: listId
     });
@@ -79,7 +84,7 @@ const updateList = asyncHandler(async (req, res) => {
 
     const list = await List.findById(listId);
 
-    if(!listId) {
+    if(!list) {
         throw new ApiError(400, "List doesn't exist");
     };
 
@@ -89,6 +94,10 @@ const updateList = asyncHandler(async (req, res) => {
 
     if(!stringValidator.safeParse(name).success) {
         throw new ApiError(400, "Invalid Type: Name must be a string")
+    };
+
+    if(!list.owner._id.equals(req.user._id)) {
+        throw new ApiError(401, "Unauthorized Request");
     };
 
     list.name = name;
@@ -126,9 +135,59 @@ const getList = asyncHandler(async (req, res) => {
     );
 });
 
+const addTodoToList = asyncHandler(async (req, res) => {
+    const { todoId } = req.query;
+    const { listId } = req.params;
+
+    const errors = [];
+
+    if(!listId) {
+        errors.push('Invalid List ID');
+    };
+
+    if(!todoId) {
+        errors.push('Invalid Todo ID');
+    };
+
+    if(errors.length > 0) {
+        throw new ApiError(400, errors);
+    };
+
+    const list = await List.findById(listId);
+
+    if(!list) {
+        throw new ApiError(400, "Something went wrong while fetching the List");
+    };
+    
+    const todo = await Todo.findById(todoId);
+
+    if(!todo) {
+        throw new ApiError(400, "Something went wrong while looking for the todo");
+    };
+    
+    await List.findByIdAndUpdate(listId, {
+        $push: {
+            todos: todo._id
+        }
+    });
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200, list, "Todo successfully added to the list")
+    );
+});
+
+const removeTodoFromList = asyncHandler(async (req, res) => {
+    const { todoId } = req.query;
+    const { listId } = req.params;
+});
+
 export {
     createList,
     deleteList,
     updateList,
-    getList
-}
+    getList,
+    addTodoToList,
+    removeTodoFromList
+};

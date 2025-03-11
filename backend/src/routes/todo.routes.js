@@ -5,7 +5,7 @@ import {
     getTodo, 
     toggleTodoCompletion, 
     updateTodo 
-} from "../controllers/todo.controllers.js";
+} from "../controllers/todo.controller.js";
 import { auth } from "../middlewares/auth.middleware.js";
 
 const router = Router();
