@@ -4,7 +4,7 @@ const listSchema = new Schema(
     {
         name: {
             type: String,
-            required: true
+            required: true,
         },
         todos: [
             {

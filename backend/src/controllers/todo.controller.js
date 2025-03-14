@@ -4,10 +4,11 @@ import { stringValidator, dateValidator } from "../utils/typeValidation.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
+import { List } from "../models/list.model.js";
 
 
 const createTodo = asyncHandler(async (req, res) => {
-  const { title, description, dueDate } = req.body;
+  const { title, description, dueDate, list } = req.body;
 
   if (!stringValidator.safeParse(title).success) {
     throw new ApiError(400, "Invalid Type: Invalid input type for the title");
@@ -24,12 +25,36 @@ const createTodo = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Invalid Type: Invalid input for the description");
     };
   };
+  
+  if(list) {
+    if(!stringValidator.safeParse(list).success) {
+      throw new ApiError(400, "Invalid Type: Invalid input for the list");
+    };
+  };
+
+  const todoList = await List.findOne({
+    name: list,
+    owner: req.user._id
+  });
+
+
+  let userList;
+  
+  if(todoList) {
+    userList = todoList
+  } else {
+    userList = await List.findOne({
+      name: 'Inbox',
+      owner: req.user._id
+    });
+  };
 
   const createdTodo = await Todo.create({
     title,
     description: description || null,
     dueDate,
-    owner: req.user._id
+    owner: req.user._id,
+    list:  userList._id
   });
 
   await User.findByIdAndUpdate(req.user._id, {
@@ -37,6 +62,10 @@ const createTodo = asyncHandler(async (req, res) => {
       todos: createdTodo._id
     }
   });
+
+  userList.todos.push(createdTodo);
+
+  await userList.save({validateBeforeSave: false});
 
   if (!createdTodo) {
     throw new ApiError(500, "Something went wrong while creating the todo");

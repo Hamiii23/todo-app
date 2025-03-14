@@ -7,6 +7,7 @@ import {
     passwordValidator
  } from '../utils/typeValidation.js';
 import { User } from '../models/user.model.js';
+import { List } from '../models/list.model.js';
 import mongoose from 'mongoose';
 
 const generateTokens = async (userId) => {
@@ -81,7 +82,21 @@ const registerUser = asyncHandler(async (req, res) => {
         password
     });
 
-    if(!user) {
+    const inboxList = await List.create({
+        name: 'Inbox',
+        owner: user._id
+    });
+
+    const completedList = await List.create({
+        name: 'Completed',
+        owner: user._id
+    });
+
+    user.lists.push(inboxList, completedList);
+    
+    await user.save({validateBeforeSave: false});
+
+    if(!user || !inboxList || !completedList) {
         throw new ApiError(500, "Something went wrong while registering the user");
     };
 
