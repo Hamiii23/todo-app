@@ -16,6 +16,15 @@ const createList = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Invalid Type: Name must be a string");
     };
 
+    const existingList = await List.findOne({
+        name,
+        owner: req.user._id
+    });
+
+    if(existingList) {
+        throw new ApiError(400, "List already exists");
+    };
+
     const list = await List.create({
         name,
         owner: req.user._id
@@ -98,6 +107,15 @@ const updateList = asyncHandler(async (req, res) => {
 
     if(!list.owner._id.equals(req.user._id)) {
         throw new ApiError(401, "Unauthorized Request");
+    };
+
+    const existingName = await List.findOne({
+        name,
+        owner: req.user._id
+    });
+
+    if(existingName) {
+        throw new ApiError(400, "A list with the name already exists in your account");
     };
 
     list.name = name;

@@ -78,7 +78,7 @@ const createTodo = asyncHandler(async (req, res) => {
 
 const updateTodo = asyncHandler(async (req, res) => {
   const { todoId } = req.params;
-  const { title, description, dueDate } = req.body;
+  const { title, description, dueDate, list } = req.body;
 
   if(!todoId) {
     throw new ApiError(400, "Invalid Todo ID");
@@ -86,14 +86,16 @@ const updateTodo = asyncHandler(async (req, res) => {
 
   const todo = await Todo.findById(todoId);
 
+  if(!todo) {
+    throw new ApiError(400, "Todo Doesn't Exist");
+  };
+
   if(!todo.owner.equals(req.user._id)) {
     throw new ApiError(401, "Unauthorized request");
   };
 
   if(title) {
-    const validTitle = stringValidator.safeParse(title);
-
-    if(!validTitle.success) {
+    if(!stringValidator.safeParse(title).success) {
       throw new ApiError(400, "Invalid input for the title");
     };
   
@@ -101,9 +103,7 @@ const updateTodo = asyncHandler(async (req, res) => {
   };
 
   if(description) {
-    const validDesc = stringValidator.safeParse(description);
-    
-    if(!validDesc.success) {
+    if(!stringValidator.safeParse(description).success) {
       throw new ApiError(400, "Invalid input type for the description");
     };
       
@@ -111,14 +111,44 @@ const updateTodo = asyncHandler(async (req, res) => {
   };
 
   if(dueDate) {
-    const validDate = dateValidator.safeParse(dueDate);
-
-    if(!validDate.success) {
+    if(!dateValidator.safeParse(dueDate).success) {
       throw new ApiError(400, "Invalid input type for the date");
     };
     
     todo.dueDate = dueDate;
   };
+  
+  if(list) {
+    if(!stringValidator.safeParse(list).success) {
+      throw new ApiError(400, "Invalid input type for the list");
+    };
+
+    const oldListId = todo.list;
+
+    const oldList = await List.findByIdAndUpdate(oldListId, {
+      $pull: {
+        todos: todoId
+      }
+    });
+
+    if(!oldList) {
+      throw new ApiError(500, "Something went wrong while removing the todo from list")
+    };
+
+    const newList = await List.findOne({
+      name: list,
+      owner: req.user._id
+    });
+
+    if(!newList) {
+      throw new ApiError(400, "List doesn't exist");
+    };
+
+    todo.list = newList._id;
+
+    newList.todos.push(todoId);
+    await newList.save({validateBeforeSave: false});
+  }
 
   await todo.save({validateBeforeSave: false});
 
