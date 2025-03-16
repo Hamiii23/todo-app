@@ -8,7 +8,7 @@ import { List } from "../models/list.model.js";
 
 
 const createTodo = asyncHandler(async (req, res) => {
-  const { title, description, dueDate, list } = req.body;
+  const { title, description, dueDate, list = 'Inbox' } = req.body;
 
   if (!stringValidator.safeParse(title).success) {
     throw new ApiError(400, "Invalid Type: Invalid input type for the title");
@@ -26,21 +26,25 @@ const createTodo = asyncHandler(async (req, res) => {
     };
   };
   
+  let todoList = null;
+
   if(list) {
     if(!stringValidator.safeParse(list).success) {
       throw new ApiError(400, "Invalid Type: Invalid input for the list");
     };
+    const findList = await List.findOne({
+      name: list,
+      owner: req.user._id
+    });
+
+    if(findList) {
+      todoList = findList
+    };
   };
-
-  const todoList = await List.findOne({
-    name: list,
-    owner: req.user._id
-  });
-
 
   let userList;
   
-  if(todoList) {
+  if(todoList !== null) {
     userList = todoList
   } else {
     userList = await List.findOne({
@@ -48,6 +52,8 @@ const createTodo = asyncHandler(async (req, res) => {
       owner: req.user._id
     });
   };
+
+  
 
   const createdTodo = await Todo.create({
     title,
@@ -174,6 +180,16 @@ const deleteTodo = asyncHandler(async (req, res) => {
 
   if(!todo.owner.equals(req.user._id)) {
     throw new ApiError(401, "Unauthorized request");
+  };
+
+  const removalFromList = await List.findByIdAndUpdate(todo.list, {
+    $pull: {
+      todos: todo._id
+    }
+  });
+
+  if(!removalFromList) {
+    throw new ApiError(500, "Something went wrong while removing todo from the list");
   };
 
   const deletedTodo = await Todo.deleteOne({
