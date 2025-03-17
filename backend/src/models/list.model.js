@@ -6,12 +6,10 @@ const listSchema = new Schema(
             type: String,
             required: true,
         },
-        todos: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "Todo"
-            }
-        ],
+        protected: {
+            type: Boolean,
+            default: false
+        },
         owner: {
             type: Schema.Types.ObjectId,
             ref: "User"

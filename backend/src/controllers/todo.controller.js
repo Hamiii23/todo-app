@@ -53,8 +53,6 @@ const createTodo = asyncHandler(async (req, res) => {
     });
   };
 
-  
-
   const createdTodo = await Todo.create({
     title,
     description: description || null,
@@ -62,16 +60,6 @@ const createTodo = asyncHandler(async (req, res) => {
     owner: req.user._id,
     list:  userList._id
   });
-
-  await User.findByIdAndUpdate(req.user._id, {
-    $push: {
-      todos: createdTodo._id
-    }
-  });
-
-  userList.todos.push(createdTodo);
-
-  await userList.save({validateBeforeSave: false});
 
   if (!createdTodo) {
     throw new ApiError(500, "Something went wrong while creating the todo");
@@ -128,19 +116,7 @@ const updateTodo = asyncHandler(async (req, res) => {
     if(!stringValidator.safeParse(list).success) {
       throw new ApiError(400, "Invalid input type for the list");
     };
-
-    const oldListId = todo.list;
-
-    const oldList = await List.findByIdAndUpdate(oldListId, {
-      $pull: {
-        todos: todoId
-      }
-    });
-
-    if(!oldList) {
-      throw new ApiError(500, "Something went wrong while removing the todo from list")
-    };
-
+    
     const newList = await List.findOne({
       name: list,
       owner: req.user._id
@@ -151,8 +127,7 @@ const updateTodo = asyncHandler(async (req, res) => {
     };
 
     todo.list = newList._id;
-
-    newList.todos.push(todoId);
+    
     await newList.save({validateBeforeSave: false});
   }
 

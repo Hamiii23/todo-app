@@ -84,19 +84,11 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const inboxList = await List.create({
         name: 'Inbox',
-        owner: user._id
+        owner: user._id,
+        protected: true
     });
 
-    const completedList = await List.create({
-        name: 'Completed',
-        owner: user._id
-    });
-
-    user.lists.push(inboxList, completedList);
-    
-    await user.save({validateBeforeSave: false});
-
-    if(!user || !inboxList || !completedList) {
+    if(!user || !inboxList) {
         throw new ApiError(500, "Something went wrong while registering the user");
     };
 
@@ -271,8 +263,12 @@ const changePassword = asyncHandler( async (req, res) => {
 
     const errors = [];
 
-    if(!(newPassword == confirmNewPassword)) {
-        errors.push(400, 'New Password and Confirm New Password does not match');
+    if(newPassword !== confirmNewPassword) {
+        errors.push('New Password and Confirm New Password does not match');
+    };
+
+    if(oldPassword == newPassword) {
+        errors.push("Old Password and New Password are the same");
     };
 
     if(!passwordValidator.safeParse(newPassword).success) {

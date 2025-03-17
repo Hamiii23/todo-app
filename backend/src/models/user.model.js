@@ -24,18 +24,6 @@ const userSchema = new Schema(
             required: true,
             min: 8
         },
-        todos: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "Todo"
-            }
-        ],
-        lists: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "List"
-            }
-        ],
         refreshToken: {
             type: String
         }

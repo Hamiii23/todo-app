@@ -64,6 +64,10 @@ const deleteList = asyncHandler(async (req, res) => {
         throw new ApiError(401, "Unauthorized Request");
     };
 
+    if(list.protected == true) {
+        throw new ApiError(400, "This list cannot be deleted");
+    };
+
     const deletedList = await List.deleteOne({
         _id: listId
     });
@@ -107,6 +111,10 @@ const updateList = asyncHandler(async (req, res) => {
 
     if(!list.owner._id.equals(req.user._id)) {
         throw new ApiError(401, "Unauthorized Request");
+    };
+
+    if(list.protected == true) {
+        throw new ApiError(400, "This list cannot be modified");
     };
 
     const existingName = await List.findOne({
@@ -176,6 +184,10 @@ const addTodoToList = asyncHandler(async (req, res) => {
     if(!list) {
         throw new ApiError(400, "Something went wrong while fetching the list");
     };
+
+    if(!list.owner._id.equals(req.user._id)) {
+        throw new ApiError(401, "Unauthorized Request");
+    };
     
     const todo = await Todo.findById(todoId);
 
@@ -183,24 +195,15 @@ const addTodoToList = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Something went wrong while looking for the todo");
     };
 
-    if (list.todos.includes(todo._id)) {
-        throw new ApiError(400, `Todo already exists in the list: ${list.name}`)
-    };
-    
-    const updatedList = await List.findByIdAndUpdate(listId, {
-        $push: {
-            todos: todo._id
-        }
-    }, {
-        new: true
-    });
+    todo.list = list._id;
 
+    await todo.save({validateBeforeSave: false});
     // const updatedList = await List.findById(listId);
 
     return res
     .status(200)
     .json(
-        new ApiResponse(200, updatedList, `Todo successfully added to the list: ${list.name}`)
+        new ApiResponse(200, {todo, list}, `Todo successfully added to the list: ${list.name}`)
     );
 });
 
@@ -235,24 +238,19 @@ const removeTodoFromList = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Something went wrong while looking for the todo");
     };
     
-    if (!list.todos.includes(todo._id)) {
-        throw new ApiError(400, `Todo doesn't exist in the list: ${list.name}`)
-    };
-
-    const updatedList = await List.findByIdAndUpdate(listId, {
-        $pull: {
-            todos: todo._id
-        }
-    }, {
-        new: true
+    const inbox = await List.findOne({
+        name: "Inbox",
+        owner: req.user._id
     });
 
-    // const updatedList = await List.findById(listId);
+    todo.list = inbox._id;
+
+    await todo.save({validateBeforeSave: false});
 
     return res
     .status(200)
     .json(
-        new ApiResponse(200, updatedList, `Todo successfully removed to the list: ${list.name}`)
+        new ApiResponse(200, {list, todo}, `Todo successfully removed from the list: ${list.name} and added back to: ${inbox.name}`)
     );
 });
 
