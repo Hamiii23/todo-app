@@ -244,10 +244,118 @@ const toggleTodoCompletion = asyncHandler(async (req, res) => {
     );
 });
 
+const getAllTodos = asyncHandler(async (req, res) => {
+  const userTodos = await Todo.aggregate([
+    {
+      $match: {
+        owner: req.user._id,
+        isDone: false
+      }
+    },
+    {
+      $group: {
+        _id: "$list",
+        totalTodos: { $sum: 1},
+        todos: {
+          $push: {
+            _id: "$_id",
+            title: "$title",
+            description: "$description",
+            dueDate: "$dueDate",
+            isDone: "$isDone",
+          }
+        }
+      }
+    },
+    {
+      $lookup: {
+        from: "lists",
+        localField: "_id",
+        foreignField: "_id",
+        as: "userList",
+      }
+    },
+    {
+      $unwind: "$userList"
+    },
+    {
+      $project: {
+        _id: 1,
+        list: "$userList.name",
+        todos: 1,
+        totalTodos: 1,
+      }
+    }
+  ]);
+
+  if(!userTodos) {
+    throw new ApiError(500, "Something went wrong while getting the user todos");
+  };
+
+  return res.status(200).json(
+    new ApiResponse(200, userTodos, "User todos fetched successfully")
+  );
+});
+
+const getCompletedTodos = asyncHandler(async (req, res) => {
+  const userTodos = await Todo.aggregate([
+    {
+      $match: {
+        owner: req.user._id,
+        isDone: true
+      }
+    },
+    {
+      $group: {
+        _id: "$list",
+        totalTodos: { $sum: 1},
+        todos: {
+          $push: {
+            id: "$_id",
+            title: "$title",
+            description: "$description",
+            dueDate: "$dueDate",
+            isDone: "$isDone",
+          }
+        }
+      }
+    },
+    {
+      $lookup: {
+        from: "lists",
+        localField: "_id",
+        foreignField: "_id",
+        as: "userList",
+      }
+    },
+    {
+      $unwind: "$userList"
+    },
+    {
+      $project: {
+        _id: 1,
+        list: "$userList.name",
+        todos: 1,
+        totalTodos: 1,
+      }
+    }
+  ]);
+
+  if(!userTodos) {
+    throw new ApiError(500, "Something went wrong while getting the user's completed todos");
+  };
+
+  return res.status(200).json(
+    new ApiResponse(200, userTodos, "User's completed todos fetched successfully")
+  );
+});
+
 export { 
   createTodo,
   updateTodo,
   deleteTodo,
   getTodo,
-  toggleTodoCompletion
+  toggleTodoCompletion,
+  getAllTodos,
+  getCompletedTodos
 };

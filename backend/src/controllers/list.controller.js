@@ -254,6 +254,14 @@ const removeTodoFromList = asyncHandler(async (req, res) => {
     );
 });
 
+const getTodosByList = asyncHandler(async (req, res) => {
+    const { listId } = req.params;
+});
+
+const getAllLists = asyncHandler(async (req, res) => {
+    
+});
+
 export {
     createList,
     deleteList,
