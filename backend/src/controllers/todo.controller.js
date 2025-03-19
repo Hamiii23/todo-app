@@ -245,6 +245,11 @@ const toggleTodoCompletion = asyncHandler(async (req, res) => {
 });
 
 const getAllTodos = asyncHandler(async (req, res) => {
+  const { sortType, sortBy = 'createdAt', page = 1, limit = 10} = req.query;
+
+  const sortStage = sortType == "asc" ? 1 : -1;
+
+
   const userTodos = await Todo.aggregate([
     {
       $match: {
@@ -253,24 +258,9 @@ const getAllTodos = asyncHandler(async (req, res) => {
       }
     },
     {
-      $group: {
-        _id: "$list",
-        totalTodos: { $sum: 1},
-        todos: {
-          $push: {
-            _id: "$_id",
-            title: "$title",
-            description: "$description",
-            dueDate: "$dueDate",
-            isDone: "$isDone",
-          }
-        }
-      }
-    },
-    {
       $lookup: {
         from: "lists",
-        localField: "_id",
+        localField: "list",
         foreignField: "_id",
         as: "userList",
       }
@@ -279,11 +269,27 @@ const getAllTodos = asyncHandler(async (req, res) => {
       $unwind: "$userList"
     },
     {
+      $sort: {
+        [sortBy]: sortStage
+      }
+    },
+    {
+      $skip: (Number(page) - 1) * Number(limit)
+    }, 
+    {
+      $limit: Number(limit)
+    },
+    {
       $project: {
-        _id: 1,
-        list: "$userList.name",
-        todos: 1,
-        totalTodos: 1,
+        id: 1,
+        title: 1,
+        description: 1,
+        idDone: 1,
+        dueDate: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        list: 1,
+        listName: "$userList.name"
       }
     }
   ]);
@@ -298,6 +304,10 @@ const getAllTodos = asyncHandler(async (req, res) => {
 });
 
 const getCompletedTodos = asyncHandler(async (req, res) => {
+  const { sortType, sortBy = 'updatedAt', page = 1, limit = 10} = req.query;
+  
+  const sortStage = sortType == "asc" ? 1 : -1;
+
   const userTodos = await Todo.aggregate([
     {
       $match: {
@@ -306,24 +316,9 @@ const getCompletedTodos = asyncHandler(async (req, res) => {
       }
     },
     {
-      $group: {
-        _id: "$list",
-        totalTodos: { $sum: 1},
-        todos: {
-          $push: {
-            id: "$_id",
-            title: "$title",
-            description: "$description",
-            dueDate: "$dueDate",
-            isDone: "$isDone",
-          }
-        }
-      }
-    },
-    {
       $lookup: {
         from: "lists",
-        localField: "_id",
+        localField: "list",
         foreignField: "_id",
         as: "userList",
       }
@@ -332,11 +327,27 @@ const getCompletedTodos = asyncHandler(async (req, res) => {
       $unwind: "$userList"
     },
     {
+      $sort: {
+        [sortBy]: sortStage
+      }
+    },
+    {
+      $skip: (Number(page) - 1) * Number(limit)
+    }, 
+    {
+      $limit: Number(limit)
+    },
+    {
       $project: {
-        _id: 1,
-        list: "$userList.name",
-        todos: 1,
-        totalTodos: 1,
+          id: 1,
+          title: 1,
+          description: 1,
+          idDone: 1,
+          dueDate: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          list: 1,
+          listName: "$userList.name"
       }
     }
   ]);
