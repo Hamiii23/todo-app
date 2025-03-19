@@ -4,6 +4,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { stringValidator } from "../utils/typeValidation.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import mongoose from "mongoose";
 
 const createList = asyncHandler(async (req, res) => {
     const { name } = req.body;
@@ -256,10 +257,63 @@ const removeTodoFromList = asyncHandler(async (req, res) => {
 
 const getTodosByList = asyncHandler(async (req, res) => {
     const { listId } = req.params;
+    const { sortType, sortBy = 'createdAt', page = 1, limit = 10} = req.query;
+    
+    const userList = await List.findById(listId);
+
+    const sortStage = sortType == "asc" ? 1 : -1;
+
+    if(!userList.owner.equals(req.user._id)) {
+        throw new ApiError(401, "Unauthorized Request");
+    };
+
+    const listTodos = await Todo.aggregate([
+        {
+            $match: {
+                list: new mongoose.Types.ObjectId(listId),
+                isDone: false
+            }
+        }, 
+        {
+            $sort: {
+                [sortBy]: sortStage
+            }
+        }, 
+        {
+            $skip: (Number(page) - 1) * Number(limit)
+        },
+        {
+            $limit: Number(limit)
+        },
+        {
+            $project: {
+                title: 1,
+                description: 1,
+                dueDate: 1,
+                createdAt: 1
+            }
+        },
+    ]);
+
+    if(!listTodos) {
+        throw new ApiError(400, "Something went wrong while looking for todos");
+    };
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200, 
+            {
+                listTodos, 
+            }, 
+            `All the Todos fetched successfully from the list: ${userList.name}`
+        )
+    );
 });
 
 const getAllLists = asyncHandler(async (req, res) => {
-    
+   
 });
 
 export {
@@ -268,5 +322,7 @@ export {
     updateList,
     getList,
     addTodoToList,
-    removeTodoFromList
+    removeTodoFromList,
+    getTodosByList,
+    getAllLists
 };

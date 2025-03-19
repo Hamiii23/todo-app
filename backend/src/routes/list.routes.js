@@ -4,6 +4,7 @@ import {
     createList,
     deleteList,
     getList,
+    getTodosByList,
     removeTodoFromList,
     updateList
 } from "../controllers/list.controller.js";
@@ -14,6 +15,7 @@ router.use(auth);
 
 
 router.route("/:listId").get(getList);
+router.route("/todos/:listId").get(getTodosByList);
 router.route("/create").post(createList);
 router.route("/delete/:listId").delete(deleteList);
 router.route("/update/:listId").patch(updateList);
