@@ -12,6 +12,9 @@ export default function SignIn() {
                 const res = await axios.post('http://localhost:8000/api/v1/user/login', {
                   username: username,
                   password: password
+                },
+                {
+                  withCredentials: true
                 });              
                 console.log(res);
           } catch (error) {

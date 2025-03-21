@@ -15,7 +15,7 @@ export default function SignUp() {
                     username,
                     email,
                     password
-                };;
+                };
 
                 if(name) {
                     userData.name = name
@@ -32,7 +32,7 @@ export default function SignUp() {
         <div className='grid justify-center'>
             <div className=''>
               <div>
-                <h1 className='text-4xl m-2'>Log In</h1>
+                <h1 className='text-4xl m-2'>Sign Up</h1>
               </div>
                 <InputBox onChange={(e) => {
                   setName(e.target.value)

@@ -1,15 +1,23 @@
 import './App.css'
 import ShowTodo from './components/ShowTodo'
-import { Link, Router } from 'react-router-dom'
+import { BrowserRouter, Link, Route, Router, Routes } from 'react-router-dom'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
+import AddTodo from './pages/AddTodo'
+import AddList from './pages/AddList'
 
 function App() {
 
   return (
     <div className='grid justify-center'>
-        <SignIn/>
-        {/* <SignUp/> */}
+      <BrowserRouter>
+        <Routes>
+          <Route path='/todo' element={<AddTodo/>}/>
+          <Route path='/list' element={<AddList/>}/>
+          <Route path='/signup' element={<SignUp/>}/>
+          <Route path='/signin' element={<SignIn/>}/>
+        </Routes>
+      </BrowserRouter>
     </div>
   )
 }

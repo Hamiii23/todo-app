@@ -313,7 +313,28 @@ const getTodosByList = asyncHandler(async (req, res) => {
 });
 
 const getAllLists = asyncHandler(async (req, res) => {
-   
+    const userLists = await List.aggregate([
+        {
+            $match: {
+                owner: req.user._id
+            }
+        },
+        {
+            $project: {
+                name: 1
+            }
+        }
+    ]);
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse (
+            200,
+            userLists,
+            'Lists fetched successfully'
+        )
+    )
 });
 
 export {

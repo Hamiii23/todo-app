@@ -3,6 +3,7 @@ import {
     addTodoToList,
     createList,
     deleteList,
+    getAllLists,
     getList,
     getTodosByList,
     removeTodoFromList,
@@ -14,6 +15,7 @@ const router = Router();
 router.use(auth);
 
 
+router.route("/").get(getAllLists);
 router.route("/:listId").get(getList);
 router.route("/todos/:listId").get(getTodosByList);
 router.route("/create").post(createList);

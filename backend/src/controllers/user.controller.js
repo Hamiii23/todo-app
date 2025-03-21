@@ -41,7 +41,13 @@ const registerUser = asyncHandler(async (req, res) => {
     if(!(email && password && username)) {
         throw new ApiError(400, 'Username, email, and password are required');
     };
+
+    const usernameRegex = /^[a-zA-Z0-9_.]+$/;
     
+    if(!usernameRegex.test(username)) {
+        errors.push(400, "username can only contain letters, numbers, '_' and '.'");
+    };
+
     if(!emailValidator.safeParse(email).success) {
         errors.push('Invalid Type: Email should be in a string and in a proper format');
     };
@@ -212,8 +218,12 @@ const updateUser = asyncHandler(async (req, res) => {
     };
 
     if(username) {
+        const usernameRegex = /^[a-zA-Z0-9_.]+$/;
+    
         if(!stringValidator.safeParse(username).success) {
             errors.push('Invalid Type: Username must be a string');
+        } else if (!usernameRegex.test(username)) {
+            errors.push(400, "username can only contain letters, numbers, '_' and '.'");
         } else {
             user.username = username;
         };
