@@ -9,10 +9,11 @@ export default function SignIn() {
     
       const loginRequest = async () => {
           try {
-                const res = await axios.post('http://localhost:8000/api/v1/user/login', {
-                  username: username,
-                  password: password
-                },
+                const userData = {
+                  username,
+                  password,
+                };
+                const res = await axios.post('http://localhost:8000/api/v1/user/login', userData,
                 {
                   withCredentials: true
                 });              
@@ -23,7 +24,7 @@ export default function SignIn() {
       };
 
     return (
-        <div className='grid justify-center'>
+        <div className='flex justify-center border-1 p-5 mt-3 border-gray-400 rounded-2xl bg-gray-50'>
             <div className=''>
               <div>
                 <h1 className='text-4xl m-2'>Log In</h1>

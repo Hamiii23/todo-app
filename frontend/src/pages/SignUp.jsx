@@ -29,7 +29,7 @@ export default function SignUp() {
       };
 
     return (
-        <div className='grid justify-center'>
+        <div className='flex justify-center border-1 p-5 mt-3 border-gray-400 rounded-2xl bg-gray-50'>
             <div className=''>
               <div>
                 <h1 className='text-4xl m-2'>Sign Up</h1>
@@ -46,7 +46,7 @@ export default function SignUp() {
                 <InputBox onChange={(e) => {
                   setPassword(e.target.value);
                 }} label={"Password"} placeholder={"enter your password"} type={"password"}/>
-                <Button onClick={registerRequest} label={"Sign In"}/>
+                <Button onClick={registerRequest} label={"Sign Up"}/>
             </div>
         </div>
     );

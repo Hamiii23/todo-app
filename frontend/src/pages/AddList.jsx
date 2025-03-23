@@ -21,7 +21,7 @@ export default function AddList() {
       };
 
     return (
-        <div className='flex justify-center'>
+        <div className='flex justify-center border-1 p-5 mt-3 border-gray-400 rounded-2xl bg-gray-50'>
             <div className=''>
               <div>
                 <h1 className='text-4xl m-2'>Add List</h1>
@@ -29,7 +29,7 @@ export default function AddList() {
                 <InputBox onChange={(e) => {
                   setName(e.target.value)
                 }} label={"Title"} placeholder={"enter your todo title"} type={"text"}/>
-                <Button onClick={listCreateRequest} label={"Sign In"}/>
+                <Button onClick={listCreateRequest} label={"Add List"}/>
             </div>
         </div>
     );
