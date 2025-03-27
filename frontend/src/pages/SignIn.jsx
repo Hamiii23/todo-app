@@ -24,8 +24,9 @@ export default function SignIn() {
       };
 
     return (
+      <div className="flex justify-center h-screen items-center">
         <div className='flex justify-center border-1 p-5 mt-3 border-gray-400 rounded-2xl bg-gray-50'>
-            <div className=''>
+            <div className='px-10 py-2'>
               <div>
                 <h1 className='text-4xl m-2'>Log In</h1>
               </div>
@@ -38,5 +39,6 @@ export default function SignIn() {
                 <Button onClick={loginRequest} label={"Sign In"}/>
             </div>
         </div>
+      </div>
     );
 };
