@@ -20,13 +20,13 @@ export default function AddTodo() {
         axios.get('http://localhost:8000/api/v1/user/', {
           withCredentials: true
         }).then((res) => {
-          if(res.date) {
-            setIsAuthenticated(true)
-          }
+          if(res.data) {
+            setIsAuthenticated(true);
+          };
         }).catch(() => {
-          navigate("/signin")
-        })
-      }, [])
+          navigate("/signin");
+        });
+      }, []);
 
       const todoAddRequest = async () => {
           try {
@@ -53,7 +53,7 @@ export default function AddTodo() {
               setUserList(res.data.data);
             })
             .catch((error) => console.error(error));
-        }
+        };
       }, [isAuthenticated]);
       
     return (

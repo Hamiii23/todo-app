@@ -13,13 +13,13 @@ export default function Home() {
         axios.get('http://localhost:8000/api/v1/user/', {
           withCredentials: true
         }).then((res) => {
-          if(res.date) {
-            setIsAuthenticated(true)
-          }
+          if(res.data) {
+            setIsAuthenticated(true);
+          };
         }).catch(() => {
-          navigate("/signin")
-        })
-      }, [])
+          navigate("/signin");
+        });
+      }, []);
 
     useEffect(() => {
         axios
@@ -29,10 +29,6 @@ export default function Home() {
           })
           .catch((error) => console.error(error));
       }, [isAuthenticated]);
-
-      useEffect(() => {
-        console.log(userTodos);
-      }, [])
 
     return (
       <div className="h-screen w-screen">
