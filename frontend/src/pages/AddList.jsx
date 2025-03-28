@@ -1,10 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from 'axios';
 import InputBox from '../components/InputBox';
 import Button from '../components/Button';
+import Card from "../components/Card";
+import Heading from "../components/Heading";
+import SubHeading from "../components/SubHeading";
+import { useNavigate } from "react-router-dom";
+
 
 export default function AddList() {
+      const navigate = useNavigate();
+      const [isAuthenticated, setIsAuthenticated] = useState(false);
       const [name, setName] = useState('');
+
+      useEffect(() => {
+        axios.get('http://localhost:8000/api/v1/user/', {
+          withCredentials: true
+        }).then((res) => {
+          if(res.date) {
+            setIsAuthenticated(true)
+          }
+        }).catch(() => {
+          navigate("/signin")
+        })
+      }, [])
     
       const listCreateRequest = async () => {
           try {
@@ -21,18 +40,15 @@ export default function AddList() {
       };
 
     return (
-      <div className="flex justify-center h-screen items-center">
-        <div className='flex justify-center border-1 p-5 mt-3 border-gray-400 rounded-2xl bg-gray-50'>
-            <div className='px-10 py-2'>
-              <div className="flex justify-center">
-                <h1 className='text-2xl m-2'>Add List</h1>
-              </div>
-                <InputBox onChange={(e) => {
-                  setName(e.target.value)
-                }} label={"Title"} placeholder={"enter your todo title"} type={"text"}/>
-                <Button onClick={listCreateRequest} label={"Add List"}/>
-            </div>
+        <div>
+          <Card>
+            <Heading label={"Add List"}/>
+            <SubHeading label={"What Would You Like to Name Your List?"}/>
+            <InputBox onChange={(e) => {
+              setName(e.target.value)
+            }} label={"Title"} placeholder={"Enter your todo title"} type={"text"}/>
+            <Button onClick={listCreateRequest} label={"Add List"}/>
+          </Card>
         </div>
-      </div>
     );
 };
