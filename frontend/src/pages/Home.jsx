@@ -14,6 +14,21 @@ export default function Home() {
   const [selectedTodo, setSelectedTodo] = useState({});
   const [listItem, setListItem] = useState([]);
 
+  const getTodoByListRequest = async (listId) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/lists/todos/${listId}`,
+        {
+          withCredentials: true,
+        },
+      );
+
+      console.log(res.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const getTodoRequest = async (todoId) => {
     try {
       const res = await axios.get(
@@ -63,29 +78,35 @@ export default function Home() {
   }, [isAuthenticated]);
 
   return (
-    <div className="h-screen w-screen">
-      <div>
+    <div className="h-screen w-screen grid grid-cols-12">
+      <div className="col-span-2">
         <Sidebar>
           <div>
             <List name={"Home"} />
           </div>
+          <div>
+            <List name={"Completed"} />
+          </div>
           {listItem.map((list) => (
             <div key={list._id}>
-              <List name={list.name} />
+              <List
+                name={list.name}
+                onClick={() => getTodoByListRequest(list._id)}
+              />
             </div>
           ))}
         </Sidebar>
       </div>
-      <div>
-        <div className="justify-center items-center h-screen pt-12">
+      <div className="col-span-9">
+        <div className="justify-center items-center h-screen pt-12 m-2">
           {userTodos.map((todo) => (
             <div
               key={todo._id}
-              className="flex py-4 px-10 m-2 shadow-md rounded-xl cursor-pointer"
+              className="flex py-4 px-10 m-2 shadow-md bg-white rounded-xl cursor-pointer"
             >
               <input
                 type="checkbox"
-                className="m-2"
+                className="m-2 p-2"
                 name={todo.title}
                 id={todo._id}
               />
@@ -126,7 +147,7 @@ export default function Home() {
               </svg>
             </div>
           ) : (
-            <AddTodo className="z-50" />
+            <AddTodo />
           )}
         </div>
       </div>
