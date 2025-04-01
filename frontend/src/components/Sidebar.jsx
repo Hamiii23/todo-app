@@ -1,3 +1,3 @@
-export default function Sidebar() {
-  return <div>Sidebar</div>;
+export default function Sidebar({ children }) {
+  return <div>{children}</div>;
 }
