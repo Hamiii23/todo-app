@@ -29,7 +29,7 @@ export default function AddTodo() {
       .catch(() => {
         navigate("/signin");
       });
-  }, []);
+  });
 
   const todoAddRequest = async () => {
     try {

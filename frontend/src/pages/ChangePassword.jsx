@@ -27,7 +27,7 @@ export default function Home() {
       .catch(() => {
         navigate("/signin");
       });
-  }, []);
+  });
 
   const changePasswordRequest = async () => {
     try {
