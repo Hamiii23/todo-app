@@ -1,35 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import Card from "./Card";
+import Heading from "./Heading";
+import InputBox from "./InputBox";
+import SubHeading from "./SubHeading";
 import axios from "axios";
-import InputBox from "../components/InputBox";
-import Button from "../components/Button";
-import Card from "../components/Card";
-import Heading from "../components/Heading";
-import { useNavigate } from "react-router-dom";
-import SubHeading from "../components/SubHeading";
+import Button from "./Button";
 
 export default function AddTodo() {
-  const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState();
   const [list, setList] = useState("");
   const [userList, setUserList] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/v1/user/", {
-        withCredentials: true,
-      })
-      .then((res) => {
-        if (res.data) {
-          setIsAuthenticated(true);
-        }
-      })
-      .catch(() => {
-        navigate("/signin");
-      });
-  });
 
   const todoAddRequest = async () => {
     try {
@@ -50,20 +32,17 @@ export default function AddTodo() {
       console.log(error);
     }
   };
-
   useEffect(() => {
-    if (isAuthenticated) {
-      axios
-        .get("http://localhost:8000/api/v1/lists/", { withCredentials: true })
-        .then((res) => {
-          setUserList(res.data.data);
-        })
-        .catch((error) => console.error(error));
-    }
-  }, [isAuthenticated]);
+    axios
+      .get("http://localhost:8000/api/v1/lists/", { withCredentials: true })
+      .then((res) => {
+        setUserList(res.data.data);
+      })
+      .catch((error) => console.error(error));
+  }, []);
 
   return (
-    <div className="flex justify-center h-screen items-center">
+    <div>
       <Card>
         <Heading label={"Add Todo"} />
         <SubHeading label={"Stay Organized – Add a New Task"} />

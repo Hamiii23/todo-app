@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import AddTodo from "./AddTodo";
+import AddTodo from "../components/AddTodo.jsx";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar.jsx";
