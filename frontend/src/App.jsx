@@ -4,6 +4,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
 import ChangePassword from "./pages/ChangePassword.jsx";
+import UpdateProfile from "./pages/UpdateProfile.jsx";
 
 function App() {
   return (
@@ -13,7 +14,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
-          <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/update/password" element={<ChangePassword />} />
+          <Route path="/update/profile" element={<UpdateProfile />} />
         </Routes>
       </BrowserRouter>
     </div>

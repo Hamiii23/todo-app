@@ -11,4 +11,3 @@ export default function InputBox({ label, placeholder, type, onChange }) {
     </div>
   );
 }
-
