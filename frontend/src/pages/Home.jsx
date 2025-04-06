@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar.jsx";
 import List from "../components/List.jsx";
 import Button from "../components/Button.jsx";
+import ProfileCard from "../components/ProfileCard.jsx";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ export default function Home() {
   const [showTodo, setShowTodo] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState({});
   const [listItem, setListItem] = useState([]);
+  const [viewingProfile, setViewingProfile] = useState(false);
+  const [userCredentials, setUserCredentials] = useState({});
 
   const getTodoByListRequest = async (listId) => {
     try {
@@ -45,6 +48,22 @@ export default function Home() {
     }
   };
 
+  const logOutRequest = async () => {
+    try {
+      const res = await axios.post(
+        "http://localhost:8000/api/v1/user/logout",
+        null,
+        {
+          withCredentials: true,
+        },
+      );
+      console.log(res.data);
+      navigate("/signin");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     axios
       .get("http://localhost:8000/api/v1/user/", {
@@ -53,12 +72,13 @@ export default function Home() {
       .then((res) => {
         if (res.data) {
           setIsAuthenticated(true);
+          setUserCredentials(res.data.data);
         }
       })
       .catch(() => {
         navigate("/signin");
       });
-  });
+  }, []);
 
   useEffect(() => {
     axios
@@ -158,22 +178,32 @@ export default function Home() {
         </div>
       </div>
       <div className="col-span-1 flex justify-center">
-        <div className="w-16 h-16  shadow hover:shadow-lg flex justify-center items-center rounded-full my-14">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-6"
+        {viewingProfile ? (
+          <ProfileCard
+            profileCredentials={userCredentials}
+            logoutOnclick={logOutRequest}
+          />
+        ) : (
+          <div
+            className="w-16 h-16  shadow hover:shadow-lg flex justify-center items-center rounded-full my-14"
+            onClick={() => setViewingProfile(true)}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-            />
-          </svg>
-        </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+              />
+            </svg>
+          </div>
+        )}
       </div>
     </div>
   );

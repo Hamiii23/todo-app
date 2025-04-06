@@ -29,7 +29,7 @@ export default function SignUp() {
         }
         navigate("/");
       });
-  });
+  }, []);
 
   const registerRequest = async () => {
     try {

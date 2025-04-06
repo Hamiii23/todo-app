@@ -6,6 +6,7 @@ import InputBox from "../components/InputBox";
 import PageWrapper from "../components/PageWrapper";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import BottomWarning from "../components/BottomWarning";
 
 export default function UpdateProfile() {
   const navigate = useNavigate();
@@ -67,6 +68,11 @@ export default function UpdateProfile() {
             placeholder={user.email}
           />
           <Button label={"Update Profile"} onClick={updateProfileRequest} />
+          <BottomWarning
+            label={"Want to change your password?"}
+            navigateTo={"Click Here"}
+            to={"/update/password"}
+          />
         </Card>
       </PageWrapper>
     </div>

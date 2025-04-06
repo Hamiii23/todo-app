@@ -7,6 +7,7 @@ import Card from "../components/Card.jsx";
 import InputBox from "../components/InputBox.jsx";
 import Button from "../components/Button.jsx";
 import PageWrapper from "../components/PageWrapper.jsx";
+import BottomWarning from "../components/BottomWarning.jsx";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -80,6 +81,11 @@ export default function Home() {
             type={"password"}
           />
           <Button onClick={changePasswordRequest} label={"Change Password"} />
+          <BottomWarning
+            label={"Want to update your profile?"}
+            navigateTo={"Click Here"}
+            to={"/update/profile"}
+          />
         </Card>
       </PageWrapper>
     </div>

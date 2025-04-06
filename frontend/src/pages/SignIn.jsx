@@ -27,7 +27,7 @@ export default function SignIn() {
         }
         navigate("/");
       });
-  });
+  }, []);
 
   const loginRequest = async () => {
     try {
