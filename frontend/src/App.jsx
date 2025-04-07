@@ -5,7 +5,6 @@ import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
 import ChangePassword from "./pages/ChangePassword.jsx";
 import UpdateProfile from "./pages/UpdateProfile.jsx";
-import ProfileCard from "./components/ProfileCard.jsx";
 
 function App() {
   return (
@@ -13,7 +12,6 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/test" element={<ProfileCard />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/update/password" element={<ChangePassword />} />

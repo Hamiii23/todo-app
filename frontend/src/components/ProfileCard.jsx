@@ -10,7 +10,7 @@ export default function ProfileCard({ profileCredentials, logoutOnclick }) {
   return (
     <div>
       <Card>
-        <div className="flex justify-between">
+        <div className="flex justify-between mb-4">
           <div>
             <h3>{profileCredentials.name}</h3>
             <p className="text-gray-600">{profileCredentials.email}</p>

@@ -27,7 +27,7 @@ export default function AddList() {
   };
 
   return (
-    <div>
+    <div className="w-96">
       <Card>
         <Heading label={"Add List"} />
         <SubHeading label={"What Would You Like to Name Your List?"} />
@@ -36,7 +36,7 @@ export default function AddList() {
             setName(e.target.value);
           }}
           label={"Title"}
-          placeholder={"Enter your todo title"}
+          placeholder={"Enter your list name"}
           type={"text"}
         />
         <Button onClick={listCreateRequest} label={"Add List"} />

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import AddTodo from "../components/AddTodo.jsx";
+import AddList from "../components/AddList.jsx";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar.jsx";
@@ -11,6 +12,7 @@ export default function Home() {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAddingTodo, setIsAddingTodo] = useState(false);
+  const [isAddingList, setIsAddingList] = useState(false);
   const [userTodos, setUserTodos] = useState([]);
   const [showTodo, setShowTodo] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState({});
@@ -26,7 +28,6 @@ export default function Home() {
           withCredentials: true,
         },
       );
-
       console.log(res.data.data);
     } catch (error) {
       console.error(error);
@@ -118,8 +119,17 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <div className="mx-2">
-            <Button label={"Add List"} />
+          <div className="mx-2 relative">
+            {isAddingList ? (
+              <div className="z-50 absolute -translate-y-80">
+                <AddList />
+              </div>
+            ) : (
+              <Button
+                label={"Add List"}
+                onClick={() => setIsAddingList(true)}
+              />
+            )}
           </div>
         </Sidebar>
       </div>
@@ -179,10 +189,12 @@ export default function Home() {
       </div>
       <div className="col-span-1 flex justify-center">
         {viewingProfile ? (
-          <ProfileCard
-            profileCredentials={userCredentials}
-            logoutOnclick={logOutRequest}
-          />
+          <div className="-translate-x-32 translate-y-5 fixed">
+            <ProfileCard
+              profileCredentials={userCredentials}
+              logoutOnclick={logOutRequest}
+            />
+          </div>
         ) : (
           <div
             className="w-16 h-16  shadow hover:shadow-lg flex justify-center items-center rounded-full my-14"
