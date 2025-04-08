@@ -7,6 +7,7 @@ import Sidebar from "../components/Sidebar.jsx";
 import List from "../components/List.jsx";
 import Button from "../components/Button.jsx";
 import ProfileCard from "../components/ProfileCard.jsx";
+import ShowTodo from "../components/ShowTodo.jsx";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -105,16 +106,17 @@ export default function Home() {
         <Sidebar>
           <div>
             <div>
-              <List name={"Home"} />
+              <List name={"Home"} modifiable={false} />
             </div>
             <div>
-              <List name={"Completed"} />
+              <List name={"Completed"} modifiable={false} />
             </div>
             {listItem.map((list) => (
               <div key={list._id}>
                 <List
                   name={list.name}
                   onClick={() => getTodoByListRequest(list._id)}
+                  modifiable
                 />
               </div>
             ))}
@@ -162,28 +164,40 @@ export default function Home() {
           ))}
         </div>
         <div className="flex sticky bottom-2 justify-center z-50">
-          {!isAddingTodo ? (
-            <div
-              onClick={() => setIsAddingTodo(true)}
-              className="h-16 w-16 bg-blue-500 rounded-full cursor-pointer hover:bg-blue-600 flex justify-center items-center text-white shadow-lg"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-6"
+          {showTodo ? (
+            <div>
+              <ShowTodo
+                title={selectedTodo.title}
+                description={selectedTodo.description}
+                buttonOnClick={() => setShowTodo(false)}
+              />
+            </div>
+          ) : !isAddingTodo ? (
+            <div>
+              <div
+                onClick={() => setIsAddingTodo(true)}
+                className="h-16 w-16 bg-blue-500 rounded-full cursor-pointer hover:bg-blue-600 flex justify-center items-center text-white shadow-lg"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 4.5v15m7.5-7.5h-15"
-                />
-              </svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                  />
+                </svg>
+              </div>
             </div>
           ) : (
-            <AddTodo />
+            <div className="-translate-y-10">
+              <AddTodo />
+            </div>
           )}
         </div>
       </div>
@@ -197,7 +211,7 @@ export default function Home() {
           </div>
         ) : (
           <div
-            className="w-16 h-16  shadow hover:shadow-lg flex justify-center items-center rounded-full my-14"
+            className="w-16 h-16 bg-white shadow hover:shadow-lg flex justify-center items-center rounded-full my-14"
             onClick={() => setViewingProfile(true)}
           >
             <svg

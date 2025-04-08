@@ -12,9 +12,10 @@ import PageWrapper from "../components/PageWrapper";
 export default function SignIn() {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState("");
+  const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState({});
 
   useEffect(() => {
     axios
@@ -31,10 +32,12 @@ export default function SignIn() {
 
   const loginRequest = async () => {
     try {
-      const userData = {
-        username,
-        password,
-      };
+      const userData = { password };
+      if (usernameOrEmail.includes("@")) {
+        userData.email = usernameOrEmail;
+      } else {
+        userData.username = usernameOrEmail;
+      }
       const res = await axios.post(
         "http://localhost:8000/api/v1/user/login",
         userData,
@@ -45,9 +48,14 @@ export default function SignIn() {
       console.log(res);
       navigate("/");
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      setErrorMessage(error.response.data);
     }
   };
+
+  useEffect(() => {
+    console.log(errorMessage);
+  }, [errorMessage]);
 
   return (
     <div>
@@ -57,7 +65,7 @@ export default function SignIn() {
           <SubHeading label={"Enter your credentials to access your account"} />
           <InputBox
             onChange={(e) => {
-              setUsername(e.target.value);
+              setUsernameOrEmail(e.target.value);
             }}
             label={"Username"}
             placeholder={"Enter your username"}
