@@ -15,8 +15,7 @@ export default function SignIn() {
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState({});
-
+  
   useEffect(() => {
     axios
       .get("http://localhost:8000/api/v1/user/", {
@@ -48,14 +47,9 @@ export default function SignIn() {
       console.log(res);
       navigate("/");
     } catch (error) {
-      // console.log(error);
-      setErrorMessage(error.response.data);
+      console.log(error);
     }
   };
-
-  useEffect(() => {
-    console.log(errorMessage);
-  }, [errorMessage]);
 
   return (
     <div>
