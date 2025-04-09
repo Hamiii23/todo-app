@@ -11,7 +11,6 @@ import PageWrapper from "../components/PageWrapper";
 
 export default function SignUp() {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -23,10 +22,7 @@ export default function SignUp() {
       .get("http://localhost:8000/api/v1/user/", {
         withCredentials: true,
       })
-      .then((res) => {
-        if (res.date) {
-          setIsAuthenticated(true);
-        }
+      .then(() => {
         navigate("/");
       });
   }, []);

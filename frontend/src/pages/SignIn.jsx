@@ -11,20 +11,16 @@ import PageWrapper from "../components/PageWrapper";
 
 export default function SignIn() {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  
+
   useEffect(() => {
     axios
       .get("http://localhost:8000/api/v1/user/", {
         withCredentials: true,
       })
-      .then((res) => {
-        if (res.date) {
-          setIsAuthenticated(true);
-        }
+      .then(() => {
         navigate("/");
       });
   }, []);
