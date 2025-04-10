@@ -20,6 +20,8 @@ export default function Home() {
   const [listItem, setListItem] = useState([]);
   const [viewingProfile, setViewingProfile] = useState(false);
   const [userCredentials, setUserCredentials] = useState({});
+  const [listTodos, setListTodos] = useState([]);
+  const [isShowingList, setIsShowingList] = useState(false);
 
   const getTodoByListRequest = async (listId) => {
     try {
@@ -29,7 +31,10 @@ export default function Home() {
           withCredentials: true,
         },
       );
-      console.log(res.data.data);
+
+      console.log(res.data.data.listTodos);
+      setListTodos(res.data.data.listTodos);
+      console.log(typeof res.data.data.listTodos);
     } catch (error) {
       console.error(error);
     }
@@ -106,16 +111,25 @@ export default function Home() {
         <Sidebar>
           <div>
             <div>
-              <List name={"Home"} modifiable={false} />
+              <List
+                name={"Home"}
+                modifiable={false}
+                onClick={() => {
+                  setIsShowingList(false);
+                }}
+              />
             </div>
             <div>
-              <List name={"Completed"} modifiable={false} />
+              <List name={"Completed"} modifiable={false} onClick={() => {}} />
             </div>
             {listItem.map((list) => (
               <div key={list._id}>
                 <List
                   name={list.name}
-                  onClick={() => getTodoByListRequest(list._id)}
+                  onClick={() => {
+                    getTodoByListRequest(list._id);
+                    setIsShowingList(true);
+                  }}
                   modifiable
                 />
               </div>
@@ -137,31 +151,57 @@ export default function Home() {
       </div>
       <div className="col-span-9">
         <div className="justify-center items-center h-screen pt-12 m-2">
-          {userTodos.map((todo) => (
-            <div
-              key={todo._id}
-              className="flex py-4 px-10 m-2 shadow-md bg-white rounded-xl cursor-pointer"
-            >
-              <input
-                type="checkbox"
-                className="m-2 p-2"
-                name={todo.title}
-                id={todo._id}
-              />
-              <div
-                onClick={() => {
-                  getTodoRequest(todo._id);
-                  setShowTodo(true);
-                }}
-              >
-                <h2 className="text-xl">{todo.title}</h2>
-                <div className="flex">
-                  {/* {todo.description && <p>{todo.description}</p>} */}
-                  {/* {todo.dueDate && <p> {new Date(todo.dueDate).toLocaleDateString()}</p>} */}
+          {isShowingList
+            ? listTodos.map((todo) => (
+                <div
+                  key={todo._id}
+                  className="flex py-4 px-10 m-2 shadow-md bg-white rounded-xl cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    className="m-2 p-2"
+                    name={todo.title}
+                    id={todo._id}
+                  />
+                  <div
+                    onClick={() => {
+                      getTodoRequest(todo._id);
+                      setShowTodo(true);
+                    }}
+                  >
+                    <h2 className="text-xl">{todo.title}</h2>
+                    <div className="flex">
+                      {/* {todo.description && <p>{todo.description}</p>} */}
+                      {/* {todo.dueDate && <p> {new Date(todo.dueDate).toLocaleDateString()}</p>} */}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              ))
+            : userTodos.map((todo) => (
+                <div
+                  key={todo._id}
+                  className="flex py-4 px-10 m-2 shadow-md bg-white rounded-xl cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    className="m-2 p-2"
+                    name={todo.title}
+                    id={todo._id}
+                  />
+                  <div
+                    onClick={() => {
+                      getTodoRequest(todo._id);
+                      setShowTodo(true);
+                    }}
+                  >
+                    <h2 className="text-xl">{todo.title}</h2>
+                    <div className="flex">
+                      {/* {todo.description && <p>{todo.description}</p>} */}
+                      {/* {todo.dueDate && <p> {new Date(todo.dueDate).toLocaleDateString()}</p>} */}
+                    </div>
+                  </div>
+                </div>
+              ))}
         </div>
         <div className="flex sticky bottom-2 justify-center z-50">
           {showTodo ? (
