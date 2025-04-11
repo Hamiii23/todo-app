@@ -96,6 +96,30 @@ export default function Home() {
       .catch((error) => console.error(error));
   }, [isAuthenticated]);
 
+  const getAllTodos = async () => {
+    try {
+      const res = await axios.get("http://localhost:8000/api/v1/todos", {
+        withCredentials: true,
+      });
+      setUserTodos(res.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getCompletedTodos = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8000/api/v1/todos/completed",
+        { withCredentials: true },
+      );
+      console.log(res.data.data);
+      setUserTodos(res.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     axios
       .get("http://localhost:8000/api/v1/lists", { withCredentials: true })
@@ -116,11 +140,16 @@ export default function Home() {
                 modifiable={false}
                 onClick={() => {
                   setIsShowingList(false);
+                  getAllTodos();
                 }}
               />
             </div>
             <div>
-              <List name={"Completed"} modifiable={false} onClick={() => {}} />
+              <List
+                name={"Completed"}
+                modifiable={false}
+                onClick={getCompletedTodos}
+              />
             </div>
             {listItem.map((list) => (
               <div key={list._id}>
