@@ -8,6 +8,7 @@ import List from "../components/List.jsx";
 import Button from "../components/Button.jsx";
 import ProfileCard from "../components/ProfileCard.jsx";
 import ShowTodo from "../components/ShowTodo.jsx";
+import TodoCard from "../components/TodoCard.jsx";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -71,36 +72,12 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/v1/user/", {
-        withCredentials: true,
-      })
-      .then((res) => {
-        if (res.data) {
-          setIsAuthenticated(true);
-          setUserCredentials(res.data.data);
-        }
-      })
-      .catch(() => {
-        navigate("/signin");
-      });
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/v1/todos/", { withCredentials: true })
-      .then((res) => {
-        setUserTodos(res.data.data);
-      })
-      .catch((error) => console.error(error));
-  }, [isAuthenticated]);
-
   const getAllTodos = async () => {
     try {
       const res = await axios.get("http://localhost:8000/api/v1/todos", {
         withCredentials: true,
       });
+      console.log(res.data.data);
       setUserTodos(res.data.data);
     } catch (error) {
       console.error(error);
@@ -120,14 +97,34 @@ export default function Home() {
     }
   };
 
+  const getAllLists = async () => {
+    try {
+      const res = await axios.get("http://localhost:8000/api/v1/lists", {
+        withCredentials: true,
+      });
+      setListItem(res.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     axios
-      .get("http://localhost:8000/api/v1/lists", { withCredentials: true })
-      .then((res) => {
-        setListItem(res.data.data);
+      .get("http://localhost:8000/api/v1/user/", {
+        withCredentials: true,
       })
-      .catch((error) => console.error(error));
-  }, [isAuthenticated]);
+      .then((res) => {
+        if (res.data) {
+          setIsAuthenticated(true);
+          setUserCredentials(res.data.data);
+          getAllTodos();
+          getAllLists();
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+      });
+  }, []);
 
   return (
     <div className="h-screen w-screen grid grid-cols-12">
@@ -182,54 +179,24 @@ export default function Home() {
         <div className="justify-center items-center h-screen pt-12 m-2">
           {isShowingList
             ? listTodos.map((todo) => (
-                <div
+                <TodoCard
                   key={todo._id}
-                  className="flex py-4 px-10 m-2 shadow-md bg-white rounded-xl cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    className="m-2 p-2"
-                    name={todo.title}
-                    id={todo._id}
-                  />
-                  <div
-                    onClick={() => {
-                      getTodoRequest(todo._id);
-                      setShowTodo(true);
-                    }}
-                  >
-                    <h2 className="text-xl">{todo.title}</h2>
-                    <div className="flex">
-                      {/* {todo.description && <p>{todo.description}</p>} */}
-                      {/* {todo.dueDate && <p> {new Date(todo.dueDate).toLocaleDateString()}</p>} */}
-                    </div>
-                  </div>
-                </div>
+                  todo={todo}
+                  onClick={() => {
+                    getTodoRequest(todo._id);
+                    setShowTodo(true);
+                  }}
+                />
               ))
             : userTodos.map((todo) => (
-                <div
+                <TodoCard
                   key={todo._id}
-                  className="flex py-4 px-10 m-2 shadow-md bg-white rounded-xl cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    className="m-2 p-2"
-                    name={todo.title}
-                    id={todo._id}
-                  />
-                  <div
-                    onClick={() => {
-                      getTodoRequest(todo._id);
-                      setShowTodo(true);
-                    }}
-                  >
-                    <h2 className="text-xl">{todo.title}</h2>
-                    <div className="flex">
-                      {/* {todo.description && <p>{todo.description}</p>} */}
-                      {/* {todo.dueDate && <p> {new Date(todo.dueDate).toLocaleDateString()}</p>} */}
-                    </div>
-                  </div>
-                </div>
+                  todo={todo}
+                  onClick={() => {
+                    getTodoRequest(todo._id);
+                    setShowTodo(true);
+                  }}
+                />
               ))}
         </div>
         <div className="flex sticky bottom-2 justify-center z-50">

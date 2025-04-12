@@ -274,6 +274,18 @@ const getTodosByList = asyncHandler(async (req, res) => {
       },
     },
     {
+      $lookup: {
+        from: "lists",
+        localField: "list",
+        foreignField: "_id",
+        as: "userList",
+      },
+    },
+    {
+      $unwind: "$userList",
+    },
+
+    {
       $sort: {
         [sortBy]: sortStage,
       },
@@ -290,6 +302,7 @@ const getTodosByList = asyncHandler(async (req, res) => {
         description: 1,
         dueDate: 1,
         createdAt: 1,
+        listName: "$userList.name",
       },
     },
   ]);
@@ -338,4 +351,3 @@ export {
   getTodosByList,
   getAllLists,
 };
-
