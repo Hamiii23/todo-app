@@ -12,7 +12,6 @@ import TodoCard from "../components/TodoCard.jsx";
 
 export default function Home() {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [isAddingList, setIsAddingList] = useState(false);
   const [userTodos, setUserTodos] = useState([]);
@@ -21,8 +20,6 @@ export default function Home() {
   const [listItem, setListItem] = useState([]);
   const [viewingProfile, setViewingProfile] = useState(false);
   const [userCredentials, setUserCredentials] = useState({});
-  const [listTodos, setListTodos] = useState([]);
-  const [isShowingList, setIsShowingList] = useState(false);
 
   const getTodoByListRequest = async (listId) => {
     try {
@@ -34,7 +31,7 @@ export default function Home() {
       );
 
       console.log(res.data.data.listTodos);
-      setListTodos(res.data.data.listTodos);
+      setUserTodos(res.data.data.listTodos);
       console.log(typeof res.data.data.listTodos);
     } catch (error) {
       console.error(error);
@@ -115,7 +112,6 @@ export default function Home() {
       })
       .then((res) => {
         if (res.data) {
-          setIsAuthenticated(true);
           setUserCredentials(res.data.data);
           getAllTodos();
           getAllLists();
@@ -124,7 +120,7 @@ export default function Home() {
       .catch(() => {
         navigate("/signin");
       });
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="h-screen w-screen grid grid-cols-12">
@@ -136,7 +132,6 @@ export default function Home() {
                 name={"Home"}
                 modifiable={false}
                 onClick={() => {
-                  setIsShowingList(false);
                   getAllTodos();
                 }}
               />
@@ -154,7 +149,6 @@ export default function Home() {
                   name={list.name}
                   onClick={() => {
                     getTodoByListRequest(list._id);
-                    setIsShowingList(true);
                   }}
                   modifiable
                 />
@@ -177,27 +171,36 @@ export default function Home() {
       </div>
       <div className="col-span-9">
         <div className="justify-center items-center h-screen pt-12 m-2">
-          {isShowingList
-            ? listTodos.map((todo) => (
-                <TodoCard
-                  key={todo._id}
-                  todo={todo}
-                  onClick={() => {
-                    getTodoRequest(todo._id);
-                    setShowTodo(true);
-                  }}
+          {userTodos.length <= 0 ? (
+            <div className="h-screen w-full flex flex-col justify-center items-center">
+              <svg
+                width="50px"
+                height="50px"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M16.6135 1C18.0104 1 19.2225 1.96423 19.5366 3.32542L21.7439 12.8903C21.9141 13.6277 22 14.3821 22 15.1389V20C22 21.6569 20.6569 23 19 23H5C3.34315 23 2 21.6569 2 20V15.1389C2 14.3821 2.08591 13.6277 2.25609 12.8903L4.46336 3.32542C4.77749 1.96423 5.98957 1 7.38654 1H16.6135ZM16.2362 3C16.6872 3 17.0823 3.30182 17.201 3.73688L20 14H15.5C14.6592 14 14.0796 14.6553 13.9633 15.3247C13.9044 15.6635 13.7693 16.0923 13.4906 16.421C13.2463 16.7092 12.8286 17 12 17C11.1714 17 10.7537 16.7092 10.5094 16.421C10.2308 16.0923 10.0956 15.6635 10.0367 15.3247C9.92037 14.6553 9.34081 14 8.5 14H4L6.79903 3.73688C6.91769 3.30182 7.31285 3 7.7638 3H16.2362ZM4 16V20C4 20.5523 4.44772 21 5 21H19C19.5523 21 20 20.5523 20 20V16H15.8641C15.7419 16.4976 15.5009 17.1425 15.0162 17.7142C14.3798 18.465 13.3974 19 12 19C10.6026 19 9.62016 18.465 8.98376 17.7142C8.49913 17.1425 8.25809 16.4976 8.13593 16H4Z"
+                  fill="#0F0F0F"
                 />
-              ))
-            : userTodos.map((todo) => (
-                <TodoCard
-                  key={todo._id}
-                  todo={todo}
-                  onClick={() => {
-                    getTodoRequest(todo._id);
-                    setShowTodo(true);
-                  }}
-                />
-              ))}
+              </svg>
+              <p className="text-2xl font-bold">No todos found</p>
+            </div>
+          ) : (
+            userTodos.map((todo) => (
+              <TodoCard
+                key={todo._id}
+                todo={todo}
+                onClick={() => {
+                  getTodoRequest(todo._id);
+                  setShowTodo(true);
+                }}
+              />
+            ))
+          )}
         </div>
         <div className="flex sticky bottom-2 justify-center z-50">
           {showTodo ? (
