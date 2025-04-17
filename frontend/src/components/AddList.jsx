@@ -6,7 +6,7 @@ import Card from "../components/Card";
 import Heading from "../components/Heading";
 import SubHeading from "../components/SubHeading";
 
-export default function AddList() {
+export default function AddList({ onComplete }) {
   const [name, setName] = useState("");
 
   const listCreateRequest = async () => {
@@ -21,6 +21,8 @@ export default function AddList() {
         },
       );
       console.log(res);
+      setName(""); // reset input
+      onComplete();
     } catch (error) {
       console.log(error);
     }

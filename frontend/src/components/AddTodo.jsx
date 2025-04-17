@@ -6,7 +6,7 @@ import SubHeading from "./SubHeading";
 import axios from "axios";
 import Button from "./Button";
 
-export default function AddTodo() {
+export default function AddTodo({ onComplete }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState();
@@ -28,6 +28,11 @@ export default function AddTodo() {
         },
       );
       console.log(res);
+      setTitle("");
+      setDescription("");
+      setDueDate("");
+      setUserList("");
+      onComplete();
     } catch (error) {
       console.log(error);
     }

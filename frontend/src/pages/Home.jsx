@@ -158,7 +158,12 @@ export default function Home() {
           <div className="mx-2 relative">
             {isAddingList ? (
               <div className="z-50 absolute -translate-y-80">
-                <AddList />
+                <AddList
+                  onComplete={() => {
+                    getAllLists();
+                    setIsAddingList(false);
+                  }}
+                />
               </div>
             ) : (
               <Button
@@ -235,7 +240,12 @@ export default function Home() {
             </div>
           ) : (
             <div className="-translate-y-10">
-              <AddTodo />
+              <AddTodo
+                onComplete={() => {
+                  getAllTodos();
+                  setIsAddingTodo(false);
+                }}
+              />
             </div>
           )}
         </div>
