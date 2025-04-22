@@ -2,12 +2,20 @@ import Button from "./Button";
 import Card from "./Card";
 import InputBox from "./InputBox";
 
-export default function ShowTodo({ title, description, buttonOnClick }) {
+export default function ShowTodo({
+  title,
+  description,
+  buttonOnClick,
+  editOnClick,
+}) {
   return (
     <div className="-translate-y-5">
       <Card>
         <div className="flex justify-end gap-2 translate-x-12 -translate-y-4">
-          <div className="shadow rounded-full p-4 hover:shadow-lg bg-gray-100">
+          <div
+            className="shadow rounded-full p-4 hover:shadow-lg bg-gray-100"
+            onClick={editOnClick}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

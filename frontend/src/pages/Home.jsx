@@ -9,11 +9,13 @@ import Button from "../components/Button.jsx";
 import ProfileCard from "../components/ProfileCard.jsx";
 import ShowTodo from "../components/ShowTodo.jsx";
 import TodoCard from "../components/TodoCard.jsx";
+import UpdateTodo from "../components/UpdateTodo.jsx";
 
 export default function Home() {
   const navigate = useNavigate();
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [isAddingList, setIsAddingList] = useState(false);
+  const [isUpdatingTodo, setIsUpdatingTodo] = useState(false);
   const [userTodos, setUserTodos] = useState([]);
   const [showTodo, setShowTodo] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState({});
@@ -158,12 +160,7 @@ export default function Home() {
           <div className="mx-2 relative">
             {isAddingList ? (
               <div className="z-50 absolute -translate-y-80">
-                <AddList
-                  onComplete={() => {
-                    getAllLists();
-                    setIsAddingList(false);
-                  }}
-                />
+                <AddList />
               </div>
             ) : (
               <Button
@@ -214,6 +211,17 @@ export default function Home() {
                 title={selectedTodo.title}
                 description={selectedTodo.description}
                 buttonOnClick={() => setShowTodo(false)}
+                editOnClick={() => {
+                  setIsUpdatingTodo(true);
+                  setShowTodo(false);
+                }}
+              />
+            </div>
+          ) : isUpdatingTodo ? (
+            <div className="-translate-y-10">
+              <UpdateTodo
+                onComplete={() => setIsAddingTodo(false)}
+                todo={selectedTodo}
               />
             </div>
           ) : !isAddingTodo ? (
@@ -240,12 +248,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="-translate-y-10">
-              <AddTodo
-                onComplete={() => {
-                  getAllTodos();
-                  setIsAddingTodo(false);
-                }}
-              />
+              <AddTodo onComplete={() => setIsAddingTodo(false)} />
             </div>
           )}
         </div>
