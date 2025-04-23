@@ -31,7 +31,7 @@ export default function AddTodo({ onComplete }) {
       setTitle("");
       setDescription("");
       setDueDate("");
-      setUserList("");
+      setList("");
       onComplete();
     } catch (error) {
       console.log(error);

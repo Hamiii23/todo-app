@@ -16,7 +16,7 @@ export default function UpdateTodo({ onComplete, todo }) {
   const todoAddRequest = async () => {
     try {
       const res = await axios.patch(
-        "http://localhost:8000/api/v1/todos/update",
+        `http://localhost:8000/api/v1/todos/update/${todo._id}`,
         {
           title,
           description,
@@ -31,7 +31,7 @@ export default function UpdateTodo({ onComplete, todo }) {
       setTitle("");
       setDescription("");
       setDueDate("");
-      setUserList("");
+      setList("");
       onComplete();
     } catch (error) {
       console.log(error);
@@ -46,6 +46,12 @@ export default function UpdateTodo({ onComplete, todo }) {
       .catch((error) => console.error(error));
   }, []);
 
+  useEffect(() => {
+    setTitle(todo.title);
+    setDescription(todo.description);
+    setDueDate(todo.dueDate);
+  }, [todo]);
+
   return (
     <div>
       <Card>
@@ -57,7 +63,7 @@ export default function UpdateTodo({ onComplete, todo }) {
           }}
           label={"Title"}
           placeholder={"Enter your todo title"}
-          value={todo.title}
+          value={title}
           type={"text"}
         />
         <InputBox
@@ -66,7 +72,7 @@ export default function UpdateTodo({ onComplete, todo }) {
           }}
           label={"Description"}
           placeholder={"Enter your todo description"}
-          value={todo.description}
+          value={description}
           type={"text"}
         />
         <InputBox
@@ -75,7 +81,7 @@ export default function UpdateTodo({ onComplete, todo }) {
           }}
           label={"Due Date"}
           placeholder={"Enter your todo due date"}
-          value={todo.dueDate}
+          value={dueDate}
           type={"date"}
         />
         <select
@@ -93,7 +99,7 @@ export default function UpdateTodo({ onComplete, todo }) {
             </option>
           ))}
         </select>
-        <Button onClick={todoAddRequest} label={"Add Todo"} />
+        <Button onClick={todoAddRequest} label={"Update Todo"} />
       </Card>
     </div>
   );
