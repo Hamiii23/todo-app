@@ -8,7 +8,7 @@ import UpdateProfile from "./pages/UpdateProfile.jsx";
 
 function App() {
   return (
-    <div className="grid justify-center bg-soft-white">
+    <div className="grid justify-center">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />

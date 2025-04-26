@@ -160,13 +160,15 @@ export default function Home() {
           <div className="mx-2 relative">
             {isAddingList ? (
               <div className="z-50 absolute -translate-y-80">
-                <AddList />
+                <AddList onComplete={() => setIsAddingList(false)} />
               </div>
             ) : (
-              <Button
-                label={"Add List"}
-                onClick={() => setIsAddingList(true)}
-              />
+              <div className="absolute -translate-y-4 w-full">
+                <Button
+                  label={"Add List"}
+                  onClick={() => setIsAddingList(true)}
+                />
+              </div>
             )}
           </div>
         </Sidebar>
