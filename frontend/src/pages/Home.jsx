@@ -174,7 +174,7 @@ export default function Home() {
         </Sidebar>
       </div>
       <div className="col-span-9">
-        <div className="justify-center items-center h-screen pt-12 m-2">
+        <div className="grid grid-cols-12 h-screen pt-12 m-2">
           {userTodos.length <= 0 ? (
             <div className="h-screen w-full flex flex-col justify-center items-center">
               <svg
@@ -195,14 +195,16 @@ export default function Home() {
             </div>
           ) : (
             userTodos.map((todo) => (
-              <TodoCard
-                key={todo._id}
-                todo={todo}
-                onClick={() => {
-                  getTodoRequest(todo._id);
-                  setShowTodo(true);
-                }}
-              />
+              <div key={todo._id} className="col-span-6">
+                <TodoCard
+                  key={todo._id}
+                  todo={todo}
+                  onClick={() => {
+                    getTodoRequest(todo._id);
+                    setShowTodo(true);
+                  }}
+                />
+              </div>
             ))
           )}
         </div>

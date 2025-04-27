@@ -1,6 +1,6 @@
 export default function TodoCard({ todo, onClick }) {
   return (
-    <div className="flex py-4 px-10 m-2 shadow-md bg-white rounded-xl cursor-pointer">
+    <div className="flex h-48 py-4 items-center px-10 m-2 shadow-md bg-white rounded-xl cursor-pointer">
       <input
         type="checkbox"
         className="my-2 mx-5 p-2"
