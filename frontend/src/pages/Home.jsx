@@ -96,6 +96,19 @@ export default function Home() {
     }
   };
 
+  const toggleTodo = async (todoId) => {
+    try {
+      const res = await axios.patch(
+        `http://localhost:8000/api/v1/todos/toggle/complete/${todoId}`,
+        {},
+        { withCredentials: true },
+      );
+      console.log(res);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const getAllLists = async () => {
     try {
       const res = await axios.get("http://localhost:8000/api/v1/lists", {
@@ -128,7 +141,7 @@ export default function Home() {
     <div className="h-screen w-screen grid grid-cols-12">
       <div className="col-span-2">
         <Sidebar>
-          <div>
+          <div className="overflow-auto">
             <div>
               <List
                 name={"Home"}
@@ -199,6 +212,7 @@ export default function Home() {
                 <TodoCard
                   key={todo._id}
                   todo={todo}
+                  inputOnChange={() => toggleTodo(todo._id)}
                   onClick={() => {
                     getTodoRequest(todo._id);
                     setShowTodo(true);
