@@ -1,4 +1,9 @@
-export default function List({ name, onClick, modifiable = true }) {
+export default function List({
+  name,
+  onClick,
+  editOnclick,
+  modifiable = true,
+}) {
   return (
     <div
       className="group m-2 bg-soft-white cursor-pointer shadow-sm rounded-xl px-6 text-sky-500 font-bold py-4 flex justify-between hover:shadow-md"
@@ -9,7 +14,7 @@ export default function List({ name, onClick, modifiable = true }) {
       </div>
       {modifiable ? (
         <div className="flex gap-2 opacity-0 group-hover:opacity-100">
-          <div>
+          <div onClick={editOnclick}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

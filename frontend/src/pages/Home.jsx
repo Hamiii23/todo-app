@@ -10,15 +10,18 @@ import ProfileCard from "../components/ProfileCard.jsx";
 import ShowTodo from "../components/ShowTodo.jsx";
 import TodoCard from "../components/TodoCard.jsx";
 import UpdateTodo from "../components/UpdateTodo.jsx";
+import UpdateList from "../components/UpdateList.jsx";
 
 export default function Home() {
   const navigate = useNavigate();
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [isAddingList, setIsAddingList] = useState(false);
   const [isUpdatingTodo, setIsUpdatingTodo] = useState(false);
+  const [isUpdatingList, setIsUpdatingLIst] = useState(false);
   const [userTodos, setUserTodos] = useState([]);
   const [showTodo, setShowTodo] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState({});
+  const [selectedList, setSelectedList] = useState({});
   const [listItem, setListItem] = useState([]);
   const [viewingProfile, setViewingProfile] = useState(false);
   const [userCredentials, setUserCredentials] = useState({});
@@ -141,7 +144,7 @@ export default function Home() {
     <div className="h-screen w-screen grid grid-cols-12">
       <div className="col-span-2">
         <Sidebar>
-          <div className="overflow-auto">
+          <div className="overflow-y-auto">
             <div>
               <List
                 name={"Home"}
@@ -166,6 +169,10 @@ export default function Home() {
                     getTodoByListRequest(list._id);
                   }}
                   modifiable
+                  editOnclick={() => {
+                    setIsUpdatingLIst(true);
+                    setSelectedList(list);
+                  }}
                 />
               </div>
             ))}
@@ -174,6 +181,13 @@ export default function Home() {
             {isAddingList ? (
               <div className="z-50 absolute -translate-y-80">
                 <AddList onComplete={() => setIsAddingList(false)} />
+              </div>
+            ) : isUpdatingList ? (
+              <div className="z-50 absolute -translate-y-80">
+                <UpdateList
+                  list={selectedList}
+                  onComplete={() => setIsUpdatingLIst(false)}
+                />
               </div>
             ) : (
               <div className="absolute -translate-y-4 w-full">
