@@ -332,6 +332,7 @@ const getAllLists = asyncHandler(async (req, res) => {
     {
       $project: {
         name: 1,
+        protected: 1,
       },
     },
   ]);

@@ -18,6 +18,7 @@ export default function Home() {
   const [isAddingList, setIsAddingList] = useState(false);
   const [isUpdatingTodo, setIsUpdatingTodo] = useState(false);
   const [isUpdatingList, setIsUpdatingLIst] = useState(false);
+  const [isDeletingList, setIsDeletingList] = useState(false);
   const [userTodos, setUserTodos] = useState([]);
   const [showTodo, setShowTodo] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState({});
@@ -164,6 +165,7 @@ export default function Home() {
             {listItem.map((list) => (
               <div key={list._id}>
                 <List
+                  isProtected={list.protected}
                   name={list.name}
                   onClick={() => {
                     getTodoByListRequest(list._id);
@@ -171,6 +173,10 @@ export default function Home() {
                   modifiable
                   editOnclick={() => {
                     setIsUpdatingLIst(true);
+                    setSelectedList(list);
+                  }}
+                  deleteOnClick={() => {
+                    setIsDeletingList(true);
                     setSelectedList(list);
                   }}
                 />

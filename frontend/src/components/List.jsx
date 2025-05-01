@@ -3,7 +3,12 @@ export default function List({
   onClick,
   editOnclick,
   modifiable = true,
+  isProtected,
+  deleteOnClick,
 }) {
+  if (isProtected == true) {
+    modifiable = false;
+  }
   return (
     <div
       className="group m-2 bg-soft-white cursor-pointer shadow-sm rounded-xl px-6 text-sky-500 font-bold py-4 flex justify-between hover:shadow-md"
@@ -30,7 +35,7 @@ export default function List({
               />
             </svg>
           </div>
-          <div>
+          <div onClick={deleteOnClick}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
