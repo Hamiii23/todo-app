@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { mongo, Schema } from "mongoose";
 
 const todoSchema = new Schema(
   {
@@ -10,21 +10,22 @@ const todoSchema = new Schema(
     dueDate: {
       type: Date,
     },
+
     description: {
       type: String,
     },
     isDone: {
       type: Boolean,
-      default: false
+      default: false,
     },
     list: {
       type: Schema.Types.ObjectId,
-      ref: "List"
+      ref: "List",
     },
     owner: {
       type: Schema.Types.ObjectId,
-      ref: "User"
-    }
+      ref: "User",
+    },
   },
   {
     timestamps: true,

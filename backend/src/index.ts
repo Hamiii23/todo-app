@@ -1,12 +1,12 @@
-import 'dotenv/config';
-import connectDB from "./db/index.js";
-import { app } from "./app.js";
+import "dotenv/config";
+import connectDB from "./db/index.ts";
+import { app } from "./app.ts";
 
 const port = process.env.PORT || 8000;
 
 connectDB()
   .then(() => {
-    app.on("ERROR ", (error) => {
+    app.on("error", (error) => {
       console.log("ERROR: ", error);
       throw error;
     });

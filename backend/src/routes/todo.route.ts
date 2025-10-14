@@ -1,18 +1,17 @@
 import { Router } from "express";
-import { 
-    createTodo, 
-    deleteTodo, 
-    getAllTodos, 
-    getCompletedTodos, 
-    getTodo, 
-    toggleTodoCompletion, 
-    updateTodo 
-} from "../controllers/todo.controller.js";
-import { auth } from "../middlewares/auth.middleware.js";
+import { auth } from "../middlewares/auth.middleware.ts";
+import {
+  createTodo,
+  updateTodo,
+  deleteTodo,
+  getTodo,
+  toggleTodoCompletion,
+  getAllTodos,
+  getCompletedTodos,
+} from "../controllers/todo.controller.ts";
 
 const router = Router();
 router.use(auth);
-
 
 router.route("/").get(getAllTodos);
 router.route("/completed").get(getCompletedTodos);

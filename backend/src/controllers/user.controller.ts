@@ -1,17 +1,18 @@
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
+import mongoose from "mongoose";
+import { List } from "../models/list.model.ts";
+import { User } from "../models/user.model.ts";
+import { ApiError } from "../utils/ApiError.ts";
+import { ApiResponse } from "../utils/ApiResponse.ts";
+import { asyncHandler } from "../utils/asyncHandler.ts";
 import {
   emailValidator,
-  stringValidator,
   passwordValidator,
-} from "../utils/typeValidation.js";
-import { User } from "../models/user.model.js";
-import { List } from "../models/list.model.js";
+  stringValidator,
+} from "../utils/typeValidation.ts";
 
-const generateTokens = async (userId) => {
+const generateTokens = async (userID: mongoose.Types.ObjectId) => {
   try {
-    const user = await User.findById(userId);
+    const user = (await User.findById(userID)) as any;
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
 
@@ -35,18 +36,13 @@ const options = {
 const registerUser = asyncHandler(async (req, res) => {
   const { name, username, email, password } = req.body;
 
-  const errors = [];
+  const errors: string[] = [];
 
   if (!(email && password && username)) {
-    throw new ApiError(400, "Username, email, and password are required");
+    throw new ApiError(400, "Username, email, and password required");
   }
 
-  const usernameRegex = /^[a-zA-Z0-9_.]+$/;
-
-  if (!usernameRegex.test(username)) {
-    errors.push(400, "username can only contain letters, numbers, '_' and '.'");
-  }
-
+  //zod type validation
   if (!emailValidator.safeParse(email).success) {
     errors.push(
       "Invalid Type: Email should be in a string and in a proper format",
@@ -70,51 +66,92 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   if (errors.length > 0) {
-    throw new ApiError(400, errors);
+    throw new ApiError(400, errors.join("; "));
   }
 
+  //verifies if the username is in valid format
+  const usernameRegex = /^[a-zA-Z0-9_.]+$/;
+
+  if (!usernameRegex.test(username)) {
+    throw new ApiError(
+      400,
+      "username can only contain letters, numbers, '_' and '.'",
+    );
+  }
   const existingUser = await User.findOne({
     $or: [{ username }, { email }],
   });
 
   if (existingUser) {
-    throw new ApiError(400, "Username/Email already exists");
+    throw new ApiError(409, "Username/Email already exists");
   }
 
-  const user = await User.create({
-    name,
-    username,
-    email,
-    password,
-  });
+  //Start of user creation transaction
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  const inboxList = await List.create({
-    name: "Inbox",
-    owner: user._id,
-    protected: true,
-  });
+  try {
+    const userResult = await User.create(
+      [
+        {
+          name,
+          username,
+          email,
+          password,
+        },
+      ],
+      { session },
+    );
 
-  if (!user || !inboxList) {
-    throw new ApiError(500, "Something went wrong while registering the user");
+    const user = userResult?.[0];
+
+    if (!user || !user._id) {
+      throw new ApiError(500, "Failed to create user");
+    }
+
+    const inbox = await List.create(
+      [
+        {
+          name: "Inbox",
+          owner: user._id,
+          protected: true,
+        },
+      ],
+      { session },
+    );
+
+    if (!inbox || inbox.length === 0) {
+      throw new ApiError(500, "Failed to create inbox list");
+    }
+
+    await session.commitTransaction();
+    //Commit the transaction
+
+    const createdUser = await User.findById(user._id).select(
+      "-password -refreshToken",
+    );
+
+    return res
+      .status(201)
+      .json(new ApiResponse(201, createdUser, "User registered successfully"));
+  } catch (error) {
+    //Aborts transaction if user creation is failed
+    await session.abortTransaction();
+    throw new ApiError(500, "Transaction failed: " + error);
+  } finally {
+    session.endSession();
+    //End of user creation transaction
   }
-
-  const createdUser = await User.findById(user._id).select(
-    "-password -refreshToken",
-  );
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, createdUser, "User registered successfully"));
 });
 
-const loginUser = asyncHandler(async (req, res) => {
+const logInUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
   if (!(username || email)) {
     throw new ApiError(400, "Email or Username is required");
   }
 
-  const errors = [];
+  const errors: string[] = [];
 
   if (email) {
     if (!emailValidator.safeParse(email).success) {
@@ -137,29 +174,34 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   if (errors.length > 0) {
-    throw new ApiError(400, errors);
+    throw new ApiError(400, errors.join("; "));
   }
 
-  const user = await User.findOne({
+  const user = (await User.findOne({
     $or: [{ username }, { email }],
-  });
+  })) as any;
 
   if (!user) {
     throw new ApiError(400, "User does not exist with given email or username");
   }
 
+  //verifies the password using bcrypt
   const passwordCheck = await user.verifyPassword(password);
 
   if (!passwordCheck) {
     throw new ApiError(400, "Incorrect password");
   }
 
-  const { accessToken, refreshToken } = await generateTokens(user._id);
+  //generates tokens so that we can store it somewhere
+  const { accessToken, refreshToken } = await generateTokens(
+    user._id as mongoose.Types.ObjectId,
+  );
 
   const loggedInUser = await User.findById(user._id).select(
     "-password -refreshToken",
   );
 
+  //returns the user and sets the cookies
   return res
     .status(200)
     .cookie("accessToken", accessToken, options)
@@ -179,7 +221,9 @@ const loginUser = asyncHandler(async (req, res) => {
 
 const logOutUser = asyncHandler(async (req, res) => {
   const user = req.user;
+  //comes from the auth middleware
 
+  //deletes the existing token which is used by the auth middleware
   await User.findByIdAndUpdate(
     user._id,
     {
@@ -192,6 +236,7 @@ const logOutUser = asyncHandler(async (req, res) => {
     },
   );
 
+  //clears the cookies
   return res
     .status(200)
     .clearCookie("accessToken", options)
@@ -206,12 +251,15 @@ const updateUser = asyncHandler(async (req, res) => {
 
   const errors = [];
 
+  //checks if there's an email provided
   if (email) {
+    //if email is provided then validate if it's a valid email
     if (!emailValidator.safeParse(email).success) {
       errors.push(
         "Invalid Type: Email should be in a string and in a proper format",
       );
     } else {
+      //if it's a valid email set it as the updated email
       user.email = email;
     }
   }
@@ -240,11 +288,13 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 
   if (errors.length > 0) {
-    throw new ApiError(400, errors);
+    throw new ApiError(400, errors.join("; "));
   }
 
+  //pushes the updates to mongodb
   const updatedUser = await user.save({ validateBeforeSave: false });
 
+  //returns the updated user
   return res
     .status(200)
     .json(new ApiResponse(200, updatedUser, "User updated successfully"));
@@ -259,7 +309,7 @@ const getUser = asyncHandler(async (req, res) => {
 const changePassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword, confirmNewPassword } = req.body;
 
-  const user = await User.findById(req.user?._id);
+  const user = (await User.findById(req.user?._id)) as any;
 
   const errors = [];
 
@@ -284,7 +334,7 @@ const changePassword = asyncHandler(async (req, res) => {
   }
 
   if (errors.length > 0) {
-    throw new ApiError(400, errors);
+    throw new ApiError(400, errors.join("; "));
   }
 
   const passwordCheck = await user.verifyPassword(oldPassword);
@@ -303,10 +353,9 @@ const changePassword = asyncHandler(async (req, res) => {
 
 export {
   registerUser,
-  loginUser,
+  logInUser,
   logOutUser,
   updateUser,
   getUser,
   changePassword,
 };
-

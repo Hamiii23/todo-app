@@ -1,19 +1,19 @@
 import { Router } from "express";
-import { 
-    registerUser,
-    loginUser,
-    logOutUser,
-    updateUser,
-    getUser,
-    changePassword
-} from "../controllers/user.controller.js";
-import { auth } from '../middlewares/auth.middleware.js';
+import {
+  changePassword,
+  getUser,
+  logInUser,
+  logOutUser,
+  registerUser,
+  updateUser,
+} from "../controllers/user.controller.ts";
+import { auth } from "../middlewares/auth.middleware.ts";
 
 const router = Router();
 
-router.route("/").get(auth ,getUser);
+router.route("/").get(auth, getUser);
 router.route("/register").post(registerUser);
-router.route("/login").post(loginUser);
+router.route("/login").post(logInUser);
 router.route("/logout").post(auth, logOutUser);
 router.route("/update").patch(auth, updateUser);
 router.route("/change-password").patch(auth, changePassword);

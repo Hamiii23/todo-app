@@ -7,9 +7,9 @@ const passwordValidator = z.string().min(8);
 const numberValidator = z.number();
 
 export {
-    stringValidator,
-    dateValidator,
-    emailValidator,
-    numberValidator,
-    passwordValidator
+  stringValidator,
+  dateValidator,
+  emailValidator,
+  numberValidator,
+  passwordValidator,
 };

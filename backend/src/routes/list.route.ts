@@ -1,23 +1,20 @@
 import { Router } from "express";
-import { 
-    addTodoToList,
-    createList,
-    deleteList,
-    getAllLists,
-    getList,
-    getTodosByList,
-    removeTodoFromList,
-    updateList
-} from "../controllers/list.controller.js";
-import { auth } from "../middlewares/auth.middleware.js";
+import { auth } from "../middlewares/auth.middleware.ts";
+import {
+  addTodoToList,
+  createList,
+  deleteList,
+  getAllLists,
+  getList,
+  removeTodoFromList,
+  updateList,
+} from "../controllers/list.controller.ts";
 
 const router = Router();
 router.use(auth);
 
-
 router.route("/").get(getAllLists);
 router.route("/:listId").get(getList);
-router.route("/todos/:listId").get(getTodosByList);
 router.route("/create").post(createList);
 router.route("/delete/:listId").delete(deleteList);
 router.route("/update/:listId").patch(updateList);
