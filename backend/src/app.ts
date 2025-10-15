@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { ApiError } from "./utils/ApiError.ts";
 
 const app = express();
 
@@ -19,9 +20,12 @@ app.use(cookieParser());
 import todoRouter from "./routes/user.route.ts";
 import userRouter from "./routes/user.route.ts";
 import listRouter from "./routes/list.route.ts";
+import { errorHandler } from "./middlewares/errorHandler.middleware.ts";
 
 app.use("/api/v1/todos", todoRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/lists", listRouter);
+
+app.use(errorHandler);
 
 export { app };
