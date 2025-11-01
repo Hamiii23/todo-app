@@ -1,19 +1,19 @@
-import "dotenv/config";
-import connectDB from "./db/index.ts";
-import { app } from "./app.ts";
+import { app } from "./app";
+import connectDB from "./db";
 
 const port = process.env.PORT || 8000;
 
 connectDB()
   .then(() => {
-    app.on("error", (error) => {
+    const server = app.listen(port, () => {
+      console.log(`Server is running on port: ${port}`);
+    });
+
+    server.on("error", (error) => {
       console.log("ERROR: ", error);
       throw error;
     });
-    app.listen(port, () => {
-      console.log(`Server is running on port: ${port}`);
-    });
   })
-  .catch((err) => {
-    console.error("MongoDB Connection Failed: ", err);
+  .catch((error) => {
+    console.error("MongoDB Connection Failed: ", error);
   });
