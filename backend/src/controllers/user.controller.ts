@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
-import { List } from "../models/list.model.ts";
-import { User } from "../models/user.model.ts";
-import { ApiError } from "../utils/ApiError.ts";
-import { ApiResponse } from "../utils/ApiResponse.ts";
-import { asyncHandler } from "../utils/asyncHandler.ts";
+import { List } from "../models/list.model";
+import { User } from "../models/user.model";
+import { ApiError } from "../utils/ApiError";
+import { ApiResponse } from "../utils/ApiResponse";
+import { asyncHandler } from "../utils/asyncHandler";
 import {
   emailValidator,
   passwordValidator,
   stringValidator,
-} from "../utils/typeValidation.ts";
+} from "../utils/typeValidation";
 
 const generateTokens = async (userID: mongoose.Types.ObjectId) => {
   try {

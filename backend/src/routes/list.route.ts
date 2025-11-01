@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { auth } from "../middlewares/auth.middleware.ts";
+import { auth } from "../middlewares/auth.middleware";
 import {
   addTodoToList,
   createList,
@@ -8,7 +8,7 @@ import {
   getList,
   removeTodoFromList,
   updateList,
-} from "../controllers/list.controller.ts";
+} from "../controllers/list.controller";
 
 const router = Router();
 router.use(auth);

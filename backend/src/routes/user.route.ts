@@ -6,8 +6,8 @@ import {
   logOutUser,
   registerUser,
   updateUser,
-} from "../controllers/user.controller.ts";
-import { auth } from "../middlewares/auth.middleware.ts";
+} from "../controllers/user.controller";
+import { auth } from "../middlewares/auth.middleware";
 
 const router = Router();
 

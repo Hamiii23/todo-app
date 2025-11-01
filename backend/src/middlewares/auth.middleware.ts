@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import { asyncHandler } from "../utils/asyncHandler.ts";
-import { ApiError } from "../utils/ApiError.ts";
-import { User } from "../models/user.model.ts";
+import { asyncHandler } from "../utils/asyncHandler";
+import { ApiError } from "../utils/ApiError";
+import { User } from "../models/user.model";
 import type { NextFunction, Request, Response } from "express";
 
 interface DecodedToken extends jwt.JwtPayload {

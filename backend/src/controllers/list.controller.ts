@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import { List } from "../models/list.model.ts";
-import { Todo } from "../models/todo.model.ts";
-import { ApiError } from "../utils/ApiError.ts";
-import { ApiResponse } from "../utils/ApiResponse.ts";
-import { asyncHandler } from "../utils/asyncHandler.ts";
-import { stringValidator } from "../utils/typeValidation.ts";
+import { List } from "../models/list.model";
+import { Todo } from "../models/todo.model";
+import { ApiError } from "../utils/ApiError";
+import { ApiResponse } from "../utils/ApiResponse";
+import { asyncHandler } from "../utils/asyncHandler";
+import { stringValidator } from "../utils/typeValidation";
 
 const createList = asyncHandler(async (req, res) => {
   const { name } = req.body;

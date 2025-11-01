@@ -16,10 +16,10 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-import todoRouter from "./routes/user.route.ts";
-import userRouter from "./routes/user.route.ts";
-import listRouter from "./routes/list.route.ts";
-import { errorHandler } from "./middlewares/errorHandler.middleware.ts";
+import todoRouter from "./routes/user.route";
+import userRouter from "./routes/user.route";
+import listRouter from "./routes/list.route";
+import { errorHandler } from "./middlewares/errorHandler.middleware";
 
 app.use("/api/v1/todos", todoRouter);
 app.use("/api/v1/user", userRouter);

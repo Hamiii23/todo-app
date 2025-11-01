@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { auth } from "../middlewares/auth.middleware.ts";
+import { auth } from "../middlewares/auth.middleware";
 import {
   createTodo,
   updateTodo,
@@ -8,7 +8,7 @@ import {
   toggleTodoCompletion,
   getAllTodos,
   getCompletedTodos,
-} from "../controllers/todo.controller.ts";
+} from "../controllers/todo.controller";
 
 const router = Router();
 router.use(auth);
