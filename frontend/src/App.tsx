@@ -1,14 +1,12 @@
 import { BrowserRouter, Route, Routes } from "react-router";
+import { Home } from "./pages/Home";
 import "./App.css";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={<div className="flex justify-center">Home</div>}
-        />
+        <Route path="/" element={<Home />} />
       </Routes>
     </BrowserRouter>
   );
