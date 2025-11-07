@@ -1,31 +1,49 @@
-import { useState } from "react";
+import { motion } from "motion/react";
 import { cn } from "../lib/utils";
 
-interface Tab {
+export interface Tab {
   id: string;
   label: string;
 }
 
 interface TabSwitchProps {
   tabs: Tab[];
-  defaultTab?: string;
+  activeTab: string;
+  switchTab: (id: string) => void;
 }
 
-export default function TabSwitch({ tabs, defaultTab }: TabSwitchProps) {
-  const [active, setActive] = useState(defaultTab || tabs[0].id);
-
+export default function TabSwitch({
+  tabs,
+  activeTab: defaultTab,
+  switchTab: onChange,
+}: TabSwitchProps) {
   return (
-    <div className="bg-neutral-200 flex p-1 gap-2 rounded-xl">
+    <div className="bg-neutral-200 flex p-1 gap-2 rounded-xl relative">
       {tabs.map((tab) => (
         <div
           key={tab.id}
-          onClick={() => setActive(tab.id)}
-          className={cn(
-            "py-2 px-6 rounded-xl cursor-pointer transition-colors duration-700 w-full text-center",
-            active === tab.id ? "bg-neutral-50" : "bg-neutral-200",
-          )}
+          onClick={() => onChange(tab.id)}
+          className="py-2 px-6 rounded-xl cursor-pointer w-full text-center relative z-10"
         >
-          {tab.label}
+          {defaultTab === tab.id && (
+            <motion.div
+              layoutId="active-tab"
+              className="absolute inset-0 bg-neutral-50 rounded-xl z-[-1]"
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 30,
+              }}
+            />
+          )}
+          <span
+            className={cn(
+              "transition-colors duration-200",
+              defaultTab === tab.id ? "text-neutral-900" : "text-neutral-600",
+            )}
+          >
+            {tab.label}
+          </span>
         </div>
       ))}
     </div>

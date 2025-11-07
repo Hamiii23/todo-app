@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { cn } from "../lib/utils";
 
 export function InputBox({
@@ -13,6 +13,7 @@ export function InputBox({
   placeholder: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [focused, setFocused] = useState(false);
 
   return (
     <div>
@@ -21,6 +22,7 @@ export function InputBox({
           "bg-neutral-100 px-8 py-2 rounded-xl border-neutral-200 drop-shadow-sm drop-shadow-neutral-400",
           "flex items-center gap-3",
           "hover:drop-shadow-sm hover:drop-shadow-neutral-400 transition duration-300",
+          focused ? "ring-1 ring-indigo-200 scale-100" : "",
         )}
         onClick={() => inputRef.current?.focus()}
       >
@@ -33,6 +35,8 @@ export function InputBox({
           <input
             ref={inputRef}
             id={type}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
             type={type}
             placeholder={placeholder}
             className={cn("outline-none bg-transparent text-sm")}
