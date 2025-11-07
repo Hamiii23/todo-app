@@ -1,14 +1,15 @@
-export const Button = ({
-  icon,
-  label,
-}: {
-  icon?: React.ReactNode;
-  label: string;
-}) => {
+import { cn } from "../lib/utils";
+
+export const Button = ({ children }: { children: React.ReactNode }) => {
   return (
-    <button className="flex gap-2 justify-center cursor-pointer py-2 px-4 bg-blue-400 rounded-lg items-center text-white w-30 transition duration-300">
-      {icon}
-      <span className="font-mono text-sm">{label}</span>
-    </button>
+    <div
+      className={cn(
+        "bg-blue-500 px-8 py-4 text-white text-center rounded-xl cursor-pointer",
+        "hover:bg-blue-600 transition duration-300",
+        "active:scale-105",
+      )}
+    >
+      {children}
+    </div>
   );
 };
