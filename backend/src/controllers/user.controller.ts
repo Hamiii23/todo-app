@@ -351,6 +351,34 @@ const changePassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Password Changed Successfully"));
 });
 
+const checkUsernameAndEmail = asyncHandler(async (req, res) => {
+  const { username, email } = req.query;
+
+  if (username) {
+    const usernameCheck = await User.findOne({
+      username,
+    });
+
+    if (usernameCheck) {
+      res.status(200).json(new ApiResponse(200, {}, "Username is available"));
+    } else {
+      throw new ApiError(400, "Username is already taken");
+    }
+  }
+
+  if (email) {
+    const emailCheck = await User.findOne({
+      email,
+    });
+
+    if (emailCheck) {
+      res.status(200).json(new ApiResponse(200, {}, "Email is available"));
+    } else {
+      throw new ApiError(400, "Email is already in use");
+    }
+  }
+});
+
 export {
   registerUser,
   logInUser,
@@ -358,4 +386,5 @@ export {
   updateUser,
   getUser,
   changePassword,
+  checkUsernameAndEmail,
 };

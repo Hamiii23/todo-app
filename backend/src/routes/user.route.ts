@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   changePassword,
+  checkUsernameAndEmail,
   getUser,
   logInUser,
   logOutUser,
@@ -17,5 +18,6 @@ router.route("/login").post(logInUser);
 router.route("/logout").post(auth, logOutUser);
 router.route("/update").patch(auth, updateUser);
 router.route("/change-password").patch(auth, changePassword);
+router.route("/check").get(checkUsernameAndEmail);
 
 export default router;
