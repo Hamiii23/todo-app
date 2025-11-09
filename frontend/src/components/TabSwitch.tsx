@@ -28,12 +28,15 @@ export default function TabSwitch({
           {defaultTab === tab.id && (
             <motion.div
               layoutId="active-tab"
-              className="absolute inset-0 bg-neutral-50 rounded-xl z-[-1]"
+              layout="position"
+              className="absolute inset-0 bg-neutral-50 rounded-xl z-[-1] select-none"
               transition={{
-                type: "spring",
-                stiffness: 300,
-                damping: 30,
+                type: "tween",
+                stiffness: 400,
+                damping: 40,
+                mass: 0.8,
               }}
+              style={{ willChange: "transform" }}
             />
           )}
           <span

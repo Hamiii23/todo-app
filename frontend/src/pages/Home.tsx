@@ -1,10 +1,63 @@
 import { useState } from "react";
 import { Button } from "../components/Button";
-import { InputBox } from "../components/InputBox";
+import { InputBox, type ValidationRule } from "../components/InputBox";
 import Orb from "../components/Orb";
 import TabSwitch, { type Tab } from "../components/TabSwitch";
 import { LockIcon, MailIcon, NameIcon, UserIcon } from "../lib/Icons";
 import { AnimatePresence, motion } from "motion/react";
+import {
+  checkEmailAndUsernameRequest,
+  loginRequest,
+  signUpRequest,
+  type LoginCredentials,
+  type SignUpCredentials,
+} from "../api";
+import axios from "axios";
+
+const emailRules: ValidationRule[] = [
+  {
+    test: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+    message: "Must be a valid email address",
+  },
+];
+
+const passwordRules: ValidationRule[] = [
+  {
+    test: (value) => value.length >= 6,
+    message: "At least 6 characters long",
+  },
+  {
+    test: (value) => /[0-9]/.test(value),
+    message: "Contains at least one number",
+  },
+  {
+    test: (value) => /[!@#$%^&*(),.?":{}|<>]/.test(value),
+    message: "Contains at least one symbol (!@#$%^&*)",
+  },
+  {
+    test: (value) => /[A-Z]/.test(value),
+    message: "Contains at least one uppercase letter",
+  },
+  {
+    test: (value) => /[a-z]/.test(value),
+    message: "Contains at least one lowercase letter",
+  },
+];
+
+const usernameRules: ValidationRule[] = [
+  {
+    test: (value) => value.length >= 3,
+    message: "At least 3 characters long",
+  },
+  {
+    test: (value) => /^[a-zA-Z0-9_]+$/.test(value),
+    message: "Only letters, numbers, and underscores allowed",
+  },
+  {
+    test: (value) => value.length <= 20,
+    message: "Maximum 20 characters",
+  },
+];
 
 export const Home = () => {
   const tabs: Tab[] = [
@@ -13,6 +66,73 @@ export const Home = () => {
   ];
 
   const [activeTab, setActiveTab] = useState(tabs[0].id);
+  const [loginCredential, setLoginCredential] = useState<LoginCredentials>({
+    email: "",
+    password: "",
+  });
+  const [signUpCredential, setSignUpCredential] = useState<SignUpCredentials>({
+    name: "",
+    email: "",
+    username: "",
+    password: "",
+  });
+
+  async function checkUserNameAvailability(username: string) {
+    try {
+      let res = await checkEmailAndUsernameRequest({ username });
+      if (res.data.success === true) {
+        return {
+          isValid: true,
+          message: res.data.message,
+        };
+      }
+      return {
+        isValid: false,
+        message: "Error checking username",
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          isValid: false,
+          message: error.response?.data.message,
+        };
+      }
+      return {
+        isValid: false,
+        message: "Error checking username",
+      };
+    }
+  }
+
+  async function checkEmailAvailability(email: string) {
+    try {
+      let res = await checkEmailAndUsernameRequest({
+        email: email.toLowerCase(),
+      });
+      if (res.data.success === true) {
+        return {
+          isValid: true,
+          message: res.data.message,
+        };
+      }
+
+      return {
+        isValid: false,
+        message: "Error checking email",
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          isValid: false,
+          message: error.response?.data.message,
+        };
+      }
+      return {
+        isValid: false,
+        message: "Error checking email",
+      };
+    }
+  }
 
   return (
     <div className="grid grid-cols-12 gap-2">
@@ -40,16 +160,32 @@ export const Home = () => {
                 className="flex flex-col gap-4"
               >
                 <InputBox
+                  id="email"
+                  onChange={(e) => {
+                    setLoginCredential({
+                      ...loginCredential,
+                      email: e.target.value,
+                    });
+                  }}
                   type="text"
                   placeholder="Enter the email"
                   label="Email"
                   icon={<MailIcon className="w-5 h-5" />}
+                  value={loginCredential.email}
                 />
                 <InputBox
+                  id="password"
+                  onChange={(e) => {
+                    setLoginCredential({
+                      ...loginCredential,
+                      password: e.target.value,
+                    });
+                  }}
                   type="password"
                   placeholder="Enter the password"
                   label="Password"
                   icon={<LockIcon className="w-5 h-5" />}
+                  value={loginCredential.password}
                 />
               </motion.div>
             ) : (
@@ -65,33 +201,90 @@ export const Home = () => {
                 className="flex flex-col gap-4"
               >
                 <InputBox
+                  id="name"
+                  value={signUpCredential.name}
+                  onChange={(e) => {
+                    setSignUpCredential({
+                      ...signUpCredential,
+                      name: e.target.value,
+                    });
+                  }}
                   type="text"
                   placeholder="Enter your name"
                   label="Name"
                   icon={<NameIcon className="w-5 h-5" />}
                 />
                 <InputBox
+                  id="username"
+                  onChange={(e) => {
+                    setSignUpCredential({
+                      ...signUpCredential,
+                      username: e.target.value,
+                    });
+                  }}
                   type="text"
                   placeholder="Enter the username"
                   label="Username"
                   icon={<UserIcon className="w-5 h-5" />}
+                  value={signUpCredential.username}
+                  validationRules={usernameRules}
+                  asyncValidation={{
+                    check: checkUserNameAvailability,
+                    debounceMs: 1000,
+                  }}
                 />
                 <InputBox
+                  id="email"
+                  onChange={(e) => {
+                    setSignUpCredential({
+                      ...signUpCredential,
+                      email: e.target.value,
+                    });
+                  }}
                   type="text"
                   placeholder="Enter the email"
                   label="Email"
                   icon={<MailIcon className="w-5 h-5" />}
+                  value={signUpCredential.email}
+                  validationRules={emailRules}
+                  asyncValidation={{
+                    check: checkEmailAvailability,
+                    debounceMs: 1000,
+                  }}
                 />
                 <InputBox
+                  id="password"
+                  onChange={(e) => {
+                    setSignUpCredential({
+                      ...signUpCredential,
+                      password: e.target.value,
+                    });
+                  }}
                   type="password"
                   placeholder="Enter the password"
+                  value={signUpCredential.password}
                   label="Password"
                   icon={<LockIcon className="w-5 h-5" />}
+                  validationRules={passwordRules}
                 />
               </motion.div>
             )}
           </AnimatePresence>
-          <Button>Continue</Button>
+          <Button
+            onClick={
+              activeTab === "signin"
+                ? () => {
+                    let res = loginRequest(loginCredential);
+                    console.log(res);
+                  }
+                : () => {
+                    let res = signUpRequest(signUpCredential);
+                    console.log(res);
+                  }
+            }
+          >
+            Continue
+          </Button>
         </div>
       </div>
       <div className="h-screen w-full col-span-9 relative">
