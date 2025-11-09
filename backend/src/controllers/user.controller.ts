@@ -359,7 +359,7 @@ const checkUsernameAndEmail = asyncHandler(async (req, res) => {
       username,
     });
 
-    if (usernameCheck) {
+    if (!usernameCheck) {
       res.status(200).json(new ApiResponse(200, {}, "Username is available"));
     } else {
       throw new ApiError(400, "Username is already taken");
@@ -371,7 +371,7 @@ const checkUsernameAndEmail = asyncHandler(async (req, res) => {
       email,
     });
 
-    if (emailCheck) {
+    if (!emailCheck) {
       res.status(200).json(new ApiResponse(200, {}, "Email is available"));
     } else {
       throw new ApiError(400, "Email is already in use");
