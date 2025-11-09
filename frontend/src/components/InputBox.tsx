@@ -83,23 +83,24 @@ export function InputBox({
         className={cn(
           "bg-neutral-100 px-8 py-2 rounded-xl border-neutral-200 drop-shadow-sm drop-shadow-neutral-400",
           "flex items-center gap-3",
+          "dark:border-neutral-700 dark:bg-neutral-900 dark:drop-shadow-neutral-600",
           "hover:drop-shadow-sm hover:drop-shadow-neutral-400 transition duration-300",
 
           hasError
             ? "border-red-500 ring-2 ring-red-200"
             : focused
-              ? "ring-1 ring-indigo-200 scale-100"
+              ? "ring-1 ring-indigo-200 scale-100 dark:ring-indigo-500/50"
               : "",
         )}
         onClick={() => inputRef.current?.focus()}
       >
-        {icon}
-        <div className="h-9 w-px bg-gray-300"></div>
+        <div className="dark:text-neutral-100">{icon}</div>
+        <div className="h-9 w-px bg-gray-300 dark:bg-gray-600"></div>
         <div className="flex flex-col">
           <label
             htmlFor={type}
             className={cn(
-              "text-xs mb-1",
+              "text-xs mb-1 dark:text-neutral-300",
               hasError ? "text-red-500" : "text-neutral-400",
             )}
           >
@@ -114,7 +115,9 @@ export function InputBox({
             onBlur={() => setFocused(false)}
             type={type}
             placeholder={placeholder}
-            className={cn("outline-none bg-transparent text-sm")}
+            className={cn(
+              "outline-none bg-transparent text-sm dark:placeholder:text-neutral-400 dark:text-neutral-100",
+            )}
           />
         </div>
         {isChecking && (
@@ -127,7 +130,7 @@ export function InputBox({
             initial={{ opacity: 0, y: -10, height: 0 }}
             animate={{ opacity: 1, y: 0, height: "auto" }}
             exit={{ opacity: 0, y: -10, height: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
             className="mt-2 ml-2 space-y-1"
           >
             {failedRules.map((rule, idx) => (
@@ -147,7 +150,8 @@ export function InputBox({
           <motion.p
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.06, duration: 0.2 }}
+            exit={{ opacity: 0, x: -10 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
             className="text-red-500 text-xs flex items-start gap-1.5 mt-2 ml-2"
           >
             <span>{asyncError}</span>
@@ -165,7 +169,7 @@ export function InputBox({
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
               className="text-green-500 text-xs flex items-start gap-1.5 mt-2 ml-2"
             >
               <span>{asyncSuccess}</span>

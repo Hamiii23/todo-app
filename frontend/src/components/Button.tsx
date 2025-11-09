@@ -12,7 +12,7 @@ export const Button = ({
       onClick={onClick}
       className={cn(
         "bg-blue-500 px-8 py-4 text-white text-center rounded-xl cursor-pointer",
-        "hover:bg-blue-600 transition duration-300",
+        "hover:bg-blue-600 transition duration-300 dark:bg-blue-600 dark:hover:bg-blue-500",
         "active:scale-105",
       )}
     >

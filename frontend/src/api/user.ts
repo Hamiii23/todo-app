@@ -84,14 +84,14 @@ export function userUpdateRequest({
 }
 
 export function updatePasswordRequest({
-  oldPassword: password,
+  oldPassword,
   newPassword,
   confirmNewPassword,
 }: UpdatePasswordCredentials) {
   return axios.patch(
     "/api/user/change-password",
     {
-      password,
+      oldPassword,
       newPassword,
       confirmNewPassword,
     },

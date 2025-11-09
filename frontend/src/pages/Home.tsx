@@ -1,9 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../components/Button";
 import { InputBox, type ValidationRule } from "../components/InputBox";
 import Orb from "../components/Orb";
 import TabSwitch, { type Tab } from "../components/TabSwitch";
-import { LockIcon, MailIcon, NameIcon, UserIcon } from "../lib/Icons";
+import {
+  LockIcon,
+  MailIcon,
+  MoonIcon,
+  NameIcon,
+  SunIcon,
+  UserIcon,
+} from "../lib/Icons";
 import { AnimatePresence, motion } from "motion/react";
 import {
   checkEmailAndUsernameRequest,
@@ -13,6 +20,7 @@ import {
   type SignUpCredentials,
 } from "../api";
 import axios from "axios";
+import { cn } from "../lib/utils";
 
 const emailRules: ValidationRule[] = [
   {
@@ -59,7 +67,7 @@ const usernameRules: ValidationRule[] = [
   },
 ];
 
-export const Home = () => {
+export default function Home() {
   const tabs: Tab[] = [
     { id: "signin", label: "Sign In" },
     { id: "signup", label: "Sign Up" },
@@ -134,11 +142,30 @@ export const Home = () => {
     }
   }
 
+  function handleThemeChange() {
+    document.documentElement.classList.toggle("dark");
+
+    const newTheme = document.documentElement.classList.contains("dark")
+      ? "dark"
+      : "light";
+
+    localStorage.setItem("theme", newTheme);
+  }
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
   return (
-    <div className="grid grid-cols-12 gap-2">
-      <div className="h-screen items-center flex p-8 col-span-3 w-full shadow-md shadow-neutral-600">
+    <div className={cn("grid grid-cols-12 gap-2", "dark:bg-neutral-950")}>
+      <div className="h-screen items-center flex p-8 col-span-3 w-full shadow-md shadow-neutral-600 dark:bg-neutral-900">
         <div className="w-full gap-4 flex flex-col">
-          <h2 className="text-2xl font-medium text-center">
+          <h2 className="text-2xl font-medium text-center dark:text-neutral-100">
             Let’s get started!
           </h2>
           <TabSwitch
@@ -292,7 +319,7 @@ export const Home = () => {
           delay={0}
           duration={8}
           size="300px"
-          color="bg-blue-300"
+          color="bg-blue-300 dark:bg-blue-600"
           x="10%"
           y="20%"
         />
@@ -300,7 +327,7 @@ export const Home = () => {
           delay={1}
           duration={10}
           size="250px"
-          color="bg-purple-400"
+          color="bg-purple-400 dark:bg-purple-600"
           x="70%"
           y="60%"
         />
@@ -308,18 +335,42 @@ export const Home = () => {
           delay={2}
           duration={9}
           size="200px"
-          color="bg-pink-400"
+          color="bg-pink-400 dark:bg-pink-600"
           x="50%"
           y="10%"
         />
         <div className="flex justify-center items-center h-screen flex-col">
-          <h1 className="text-4xl font-medium">
+          <h1 className="text-4xl font-medium dark:text-neutral-100">
             Welcome to the{" "}
             <span className="text-blue-700 italic">Todo App</span>
           </h1>
-          <h2>Your tasks, goals, and priorities — all in one simple place</h2>
+          <h2 className={cn("dark:text-neutral-100")}>
+            Your tasks, goals, and priorities — all in one simple place
+          </h2>
+        </div>
+        <div
+          onClick={handleThemeChange}
+          className={cn(
+            "absolute top-4 right-4 border-gray-300 border-2 p-1 rounded-xl cursor-pointer",
+            "transition-all duration-500 ease-in-out",
+            "opacity-0 rotate-180 scale-0",
+            "dark:opacity-100 dark:rotate-0 dark:scale-100 dark:text-neutral-100 dark:border-neutral-700",
+          )}
+        >
+          <SunIcon />
+        </div>
+        <div
+          onClick={handleThemeChange}
+          className={cn(
+            "absolute top-4 right-4 border-gray-300 border-2 p-1 rounded-xl cursor-pointer",
+            "transition-all duration-500 ease-in-out",
+            "opacity-100 rotate-0 scale-100",
+            "dark:opacity-0 dark:rotate-180 dark:scale-0",
+          )}
+        >
+          <MoonIcon />
         </div>
       </div>
     </div>
   );
-};
+}

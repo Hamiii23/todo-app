@@ -18,7 +18,7 @@ export default function TabSwitch({
   switchTab: onChange,
 }: TabSwitchProps) {
   return (
-    <div className="bg-neutral-200 flex p-1 gap-2 rounded-xl relative">
+    <div className="bg-neutral-200 dark:bg-neutral-800 flex p-1 gap-2 rounded-xl relative">
       {tabs.map((tab) => (
         <div
           key={tab.id}
@@ -29,7 +29,7 @@ export default function TabSwitch({
             <motion.div
               layoutId="active-tab"
               layout="position"
-              className="absolute inset-0 bg-neutral-50 rounded-xl z-[-1] select-none"
+              className="absolute inset-0 bg-neutral-50 rounded-xl z-[-1] select-none dark:bg-neutral-900"
               transition={{
                 type: "tween",
                 stiffness: 400,
@@ -42,7 +42,9 @@ export default function TabSwitch({
           <span
             className={cn(
               "transition-colors duration-200",
-              defaultTab === tab.id ? "text-neutral-900" : "text-neutral-600",
+              defaultTab === tab.id
+                ? "text-neutral-900 dark:text-neutral-100"
+                : "text-neutral-600 dark:text-neutral-400",
             )}
           >
             {tab.label}
