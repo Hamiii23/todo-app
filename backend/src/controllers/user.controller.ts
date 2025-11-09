@@ -36,8 +36,8 @@ const options = {
 const registerUser = asyncHandler(async (req, res) => {
   const { name, username, email, password } = req.body;
 
-  const validUsername = username.toLowerCase().trim();
-  const validEmail = email.toLowerCase().trim();
+  const validUsername = username ? username.toLowerCase().trim() : undefined;
+  const validEmail = email ? email.toLowerCase().trim() : undefined;
 
   const errors: string[] = [];
 
@@ -150,8 +150,8 @@ const registerUser = asyncHandler(async (req, res) => {
 const logInUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
-  let validEmail = email.toLowerCase().trim();
-  let validUsername = username.toLowerCase().trim();
+  const validEmail = email ? email.toLowerCase().trim() : undefined;
+  const validUsername = username ? username.toLowerCase().trim() : undefined;
 
   if (!(username || email)) {
     throw new ApiError(400, "Email or Username is required");
@@ -253,8 +253,8 @@ const logOutUser = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
   const { username, email, name } = req.body;
 
-  let validEmail = email.toLowerCase().trim();
-  let validUsername = username.toLowerCase().trim();
+  const validEmail = email ? email.toLowerCase().trim() : undefined;
+  const validUsername = username ? username.toLowerCase().trim() : undefined;
 
   const user = req.user;
 
