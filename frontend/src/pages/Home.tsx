@@ -3,14 +3,7 @@ import { Button } from "../components/Button";
 import { InputBox } from "../components/InputBox";
 import Orb from "../components/Orb";
 import TabSwitch, { type Tab } from "../components/TabSwitch";
-import {
-  LockIcon,
-  MailIcon,
-  MoonIcon,
-  NameIcon,
-  SunIcon,
-  UserIcon,
-} from "../lib/Icons";
+import { LockIcon, MailIcon, NameIcon, UserIcon } from "../lib/Icons";
 import { AnimatePresence, motion } from "motion/react";
 import {
   loginRequest,
@@ -23,10 +16,10 @@ import {
   checkEmailAvailability,
   checkUserNameAvailability,
   emailRules,
-  handleThemeChange,
   passwordRules,
   usernameRules,
 } from "../lib";
+import ThemeSwitcher from "../components/ThemeSwitcher";
 
 export default function Home() {
   const tabs: Tab[] = [
@@ -242,28 +235,7 @@ export default function Home() {
             Your tasks, goals, and priorities — all in one simple place
           </h2>
         </div>
-        <div
-          onClick={handleThemeChange}
-          className={cn(
-            "absolute top-4 right-4 border-gray-300 border-2 p-1 rounded-xl cursor-pointer",
-            "transition-all duration-500 ease-in-out",
-            "opacity-0 rotate-180 scale-0",
-            "dark:opacity-100 dark:rotate-0 dark:scale-100 dark:text-neutral-100 dark:border-neutral-700",
-          )}
-        >
-          <SunIcon />
-        </div>
-        <div
-          onClick={handleThemeChange}
-          className={cn(
-            "absolute top-4 right-4 border-gray-300 border-2 p-1 rounded-xl cursor-pointer",
-            "transition-all duration-500 ease-in-out",
-            "opacity-100 rotate-0 scale-100",
-            "dark:opacity-0 dark:rotate-180 dark:scale-0",
-          )}
-        >
-          <MoonIcon />
-        </div>
+        <ThemeSwitcher />
       </div>
     </div>
   );
