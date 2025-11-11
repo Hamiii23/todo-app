@@ -1,8 +1,14 @@
 import { cn } from "./utils";
 
-function LockIcon({ className }: { className?: string }) {
+function LockIcon({
+  className,
+  color,
+}: {
+  className?: string;
+  color?: string;
+}) {
   return (
-    <div>
+    <div className={color}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -27,10 +33,15 @@ function LockIcon({ className }: { className?: string }) {
   );
 }
 
-function MailIcon({ className }: { className?: string }) {
+function MailIcon({
+  className,
+  color,
+}: {
+  className?: string;
+  color?: string;
+}) {
   return (
-    <div>
-      {" "}
+    <div className={color}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -54,9 +65,15 @@ function MailIcon({ className }: { className?: string }) {
   );
 }
 
-function UserIcon({ className }: { className?: string }) {
+function UserIcon({
+  className,
+  color,
+}: {
+  className?: string;
+  color?: string;
+}) {
   return (
-    <div>
+    <div className={color}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -80,9 +97,15 @@ function UserIcon({ className }: { className?: string }) {
   );
 }
 
-function NameIcon({ className }: { className?: string }) {
+function NameIcon({
+  className,
+  color,
+}: {
+  className?: string;
+  color?: string;
+}) {
   return (
-    <div>
+    <div className={color}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -107,9 +130,15 @@ function NameIcon({ className }: { className?: string }) {
   );
 }
 
-function MoonIcon(className: { className?: string }) {
+function MoonIcon({
+  className,
+  color,
+}: {
+  className?: string;
+  color?: string;
+}) {
   return (
-    <div>
+    <div className={color}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -132,9 +161,9 @@ function MoonIcon(className: { className?: string }) {
   );
 }
 
-function SunIcon(className: { className?: string }) {
+function SunIcon({ className, color }: { className?: string; color?: string }) {
   return (
-    <div>
+    <div className={color}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"

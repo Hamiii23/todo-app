@@ -87,7 +87,7 @@ export function InputBox({
           "hover:drop-shadow-sm hover:drop-shadow-neutral-400 transition duration-300",
 
           hasError
-            ? "border-red-500 ring-2 ring-red-200"
+            ? "border-red-500 ring-2 ring-red-500/20"
             : focused
               ? "ring-1 ring-indigo-200 scale-100 dark:ring-indigo-500/50"
               : "",
@@ -101,7 +101,7 @@ export function InputBox({
             htmlFor={type}
             className={cn(
               "text-xs mb-1 dark:text-neutral-300",
-              hasError ? "text-red-500" : "text-neutral-400",
+              hasError ? "text-red-500 dark:text-red-500" : "text-neutral-400",
             )}
           >
             {label}

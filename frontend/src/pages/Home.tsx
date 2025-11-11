@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "../components/Button";
-import { InputBox, type ValidationRule } from "../components/InputBox";
+import { InputBox } from "../components/InputBox";
 import Orb from "../components/Orb";
 import TabSwitch, { type Tab } from "../components/TabSwitch";
 import {
@@ -13,59 +13,20 @@ import {
 } from "../lib/Icons";
 import { AnimatePresence, motion } from "motion/react";
 import {
-  checkEmailAndUsernameRequest,
   loginRequest,
   signUpRequest,
   type LoginCredentials,
   type SignUpCredentials,
 } from "../api";
-import axios from "axios";
 import { cn } from "../lib/utils";
-
-const emailRules: ValidationRule[] = [
-  {
-    test: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-    message: "Must be a valid email address",
-  },
-];
-
-const passwordRules: ValidationRule[] = [
-  {
-    test: (value) => value.length >= 6,
-    message: "At least 6 characters long",
-  },
-  {
-    test: (value) => /[0-9]/.test(value),
-    message: "Contains at least one number",
-  },
-  {
-    test: (value) => /[!@#$%^&*(),.?":{}|<>]/.test(value),
-    message: "Contains at least one symbol (!@#$%^&*)",
-  },
-  {
-    test: (value) => /[A-Z]/.test(value),
-    message: "Contains at least one uppercase letter",
-  },
-  {
-    test: (value) => /[a-z]/.test(value),
-    message: "Contains at least one lowercase letter",
-  },
-];
-
-const usernameRules: ValidationRule[] = [
-  {
-    test: (value) => value.length >= 3,
-    message: "At least 3 characters long",
-  },
-  {
-    test: (value) => /^[a-zA-Z0-9_]+$/.test(value),
-    message: "Only letters, numbers, and underscores allowed",
-  },
-  {
-    test: (value) => value.length <= 20,
-    message: "Maximum 20 characters",
-  },
-];
+import {
+  checkEmailAvailability,
+  checkUserNameAvailability,
+  emailRules,
+  handleThemeChange,
+  passwordRules,
+  usernameRules,
+} from "../lib";
 
 export default function Home() {
   const tabs: Tab[] = [
@@ -84,73 +45,6 @@ export default function Home() {
     username: "",
     password: "",
   });
-
-  async function checkUserNameAvailability(username: string) {
-    try {
-      let res = await checkEmailAndUsernameRequest({ username });
-      if (res.data.success === true) {
-        return {
-          isValid: true,
-          message: res.data.message,
-        };
-      }
-      return {
-        isValid: false,
-        message: "Error checking username",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          isValid: false,
-          message: error.response?.data.message,
-        };
-      }
-      return {
-        isValid: false,
-        message: "Error checking username",
-      };
-    }
-  }
-
-  async function checkEmailAvailability(email: string) {
-    try {
-      let res = await checkEmailAndUsernameRequest({
-        email: email.toLowerCase(),
-      });
-      if (res.data.success === true) {
-        return {
-          isValid: true,
-          message: res.data.message,
-        };
-      }
-
-      return {
-        isValid: false,
-        message: "Error checking email",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          isValid: false,
-          message: error.response?.data.message,
-        };
-      }
-      return {
-        isValid: false,
-        message: "Error checking email",
-      };
-    }
-  }
-
-  function handleThemeChange() {
-    document.documentElement.classList.toggle("dark");
-
-    const newTheme = document.documentElement.classList.contains("dark")
-      ? "dark"
-      : "light";
-
-    localStorage.setItem("theme", newTheme);
-  }
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
