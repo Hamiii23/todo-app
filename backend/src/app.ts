@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-import todoRouter from "./routes/user.route";
+import todoRouter from "./routes/todo.route";
 import userRouter from "./routes/user.route";
 import listRouter from "./routes/list.route";
 import { errorHandler } from "./middlewares/errorHandler.middleware";

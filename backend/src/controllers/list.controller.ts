@@ -7,14 +7,30 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { stringValidator } from "../utils/typeValidation";
 
 const createList = asyncHandler(async (req, res) => {
-  const { name } = req.body;
+  const { name, color, icon } = req.body;
 
   if (!name) {
     throw new ApiError(400, "Name is required");
   }
 
+  if (!color) {
+    throw new ApiError(400, "Color is required");
+  }
+
+  if (!icon) {
+    throw new ApiError(400, "Icon is required");
+  }
+
   if (!stringValidator.safeParse(name).success) {
     throw new ApiError(400, "Invalid Type: Name must be a string");
+  }
+
+  if (!stringValidator.safeParse(color).success) {
+    throw new ApiError(400, "Invalid Type: Color must be a string");
+  }
+
+  if (!stringValidator.safeParse(icon).success) {
+    throw new ApiError(400, "Invalid Type: Icon must be a string");
   }
 
   //checks if list exists already with the name
@@ -30,6 +46,8 @@ const createList = asyncHandler(async (req, res) => {
 
   const list = await List.create({
     name,
+    color: color || "green",
+    icon: icon || "list",
     owner: req.user._id,
   });
 
@@ -90,7 +108,7 @@ const deleteList = asyncHandler(async (req, res) => {
 
 const updateList = asyncHandler(async (req, res) => {
   const { listId } = req.params;
-  const { name } = req.body;
+  const { name, color, icon } = req.body;
 
   if (!listId) {
     throw new ApiError(400, "Invalid List ID");
@@ -100,14 +118,6 @@ const updateList = asyncHandler(async (req, res) => {
 
   if (!list) {
     throw new ApiError(400, "List doesn't exist");
-  }
-
-  if (!name) {
-    throw new ApiError(400, "Name is required to update");
-  }
-
-  if (!stringValidator.safeParse(name).success) {
-    throw new ApiError(400, "Invalid Type: Name must be a string");
   }
 
   //validates if the owner of list and the logged in user are the same or not
@@ -121,19 +131,39 @@ const updateList = asyncHandler(async (req, res) => {
   }
 
   //checks if list with the updated name exists already
-  const existingName = await List.findOne({
-    name,
-    owner: req.user._id,
-  });
+  if (name) {
+    if (!stringValidator.safeParse(name).success) {
+      throw new ApiError(400, "Invalid Type: Name must be a string");
+    }
 
-  if (existingName) {
-    throw new ApiError(
-      400,
-      "A list with the name already exists in your account",
-    );
+    const existingName = await List.findOne({
+      name,
+      owner: req.user._id,
+    });
+
+    if (existingName) {
+      throw new ApiError(
+        400,
+        "A list with the name already exists in your account",
+      );
+    }
+
+    list.name = name;
   }
 
-  list.name = name;
+  if (color) {
+    if (!stringValidator.safeParse(color).success) {
+      throw new ApiError(400, "Invalid Type: Color must be a string");
+    }
+    list.color = color;
+  }
+
+  if (icon) {
+    if (!stringValidator.safeParse(icon).success) {
+      throw new ApiError(400, "Invalid Type: Icon must be a string");
+    }
+    list.icon = icon;
+  }
 
   await list.save({ validateBeforeSave: false });
 
@@ -345,6 +375,8 @@ const getAllLists = asyncHandler(async (req, res) => {
     {
       $project: {
         name: 1,
+        color: 1,
+        icon: 1,
         protected: 1,
       },
     },

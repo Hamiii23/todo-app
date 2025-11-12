@@ -181,6 +181,7 @@ const deleteTodo = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, {}, "Todo deleted successfully"));
 });
+
 const getTodo = asyncHandler(async (req, res) => {
   const { todoId } = req.params;
 
@@ -188,7 +189,7 @@ const getTodo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid Todo ID");
   }
 
-  const todo = (await Todo.findById(todoId)) as any;
+  const todo = (await Todo.findById(todoId).populate("list")) as any;
 
   if (!todo) {
     throw new ApiError(500, "Something went wrong while fetching the todo");
@@ -202,6 +203,7 @@ const getTodo = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, todo, "Todo fetched successfully"));
 });
+
 const toggleTodoCompletion = asyncHandler(async (req, res) => {
   const { todoId } = req.params;
 

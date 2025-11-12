@@ -118,6 +118,8 @@ const registerUser = asyncHandler(async (req, res) => {
           name: "Inbox",
           owner: user._id,
           protected: true,
+          color: "blue",
+          icon: "inbox",
         },
       ],
       { session },
