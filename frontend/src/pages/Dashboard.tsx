@@ -1,9 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ThemeSwitcher from "../components/ThemeSwitcher";
 import { cn } from "../lib/utils";
 import TodoInput from "../components/TodoInput";
+import { PlusIcon } from "../lib/Icons";
 
 export default function Dashboard() {
+  const [isAddingTodo, setIsAddingTodo] = useState(false);
+
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "dark") {
@@ -13,6 +16,17 @@ export default function Dashboard() {
     }
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsAddingTodo(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isAddingTodo]);
+
   return (
     <div
       className={cn(
@@ -21,8 +35,22 @@ export default function Dashboard() {
       )}
     >
       <ThemeSwitcher />
-      <div className="absolute bottom-2">
-        <TodoInput />
+      <div className="absolute bottom-6">
+        {isAddingTodo ? (
+          <div>
+            <TodoInput />
+          </div>
+        ) : (
+          <div
+            onClick={() => setIsAddingTodo(true)}
+            className={cn(
+              "bg-blue-400 p-5 rounded-2xl cursor-pointer",
+              "hover:bg-blue-500 transition-all duration-400 text-neutral-50 active:scale-105",
+            )}
+          >
+            <PlusIcon />
+          </div>
+        )}
       </div>
     </div>
   );
