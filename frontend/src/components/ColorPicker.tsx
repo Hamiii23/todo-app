@@ -3,7 +3,13 @@ import { colorList } from "../lib";
 import { motion } from "motion/react";
 import { cn } from "../lib/utils";
 
-export default function ColorPicker() {
+export default function ColorPicker({
+  selectColor,
+  colorOpen,
+}: {
+  selectColor?: (color: string) => void;
+  colorOpen?: (state: boolean) => void;
+}) {
   const [currentPage, setCurrentPage] = useState(0);
 
   const itemsPerPage = 8;
@@ -93,6 +99,10 @@ export default function ColorPicker() {
                 color.altHover,
                 "w-8 h-8 rounded-full cursor-pointer transition-all duration-500",
               )}
+              onClick={() => {
+                selectColor?.(color.title);
+                colorOpen?.(false);
+              }}
             ></div>
           ))}
         </motion.div>

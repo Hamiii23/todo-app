@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { iconsList } from "../lib/Icons";
+import { iconsList, type IconItem } from "../lib/Icons";
 import { motion } from "motion/react";
 import { cn } from "../lib/utils";
 
 export default function IconsPicker({
   openIcons,
+  selectIcon,
 }: {
   openIcons?: (state: boolean) => void;
+  selectIcon?: (icon: IconItem) => void;
 }) {
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -100,6 +102,7 @@ export default function IconsPicker({
                   "bg-neutral-100 hover:bg-neutral-200",
                 )}
                 onClick={() => {
+                  selectIcon?.(icon);
                   openIcons?.(false);
                 }}
               >

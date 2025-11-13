@@ -5,6 +5,13 @@ interface IconProps {
   className?: string;
 }
 
+export type IconComponent = React.ComponentType<IconProps>;
+
+export interface IconItem {
+  title: string;
+  icon: IconComponent;
+}
+
 function LockIcon({ className, color }: IconProps) {
   return (
     <div className={color}>
@@ -621,7 +628,7 @@ function PlusIcon({ color, className }: IconProps) {
   );
 }
 
-export const iconsList = [
+export const iconsList: IconItem[] = [
   { title: "mail", icon: MailIcon },
   { title: "lock", icon: LockIcon },
   { title: "user", icon: UserIcon },
