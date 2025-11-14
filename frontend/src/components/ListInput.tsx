@@ -2,9 +2,9 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import {
   ColorsIcon,
+  EnterIcon,
   IconsIcon,
   ListIcon,
-  TickIcon,
   type IconItem,
 } from "../lib/Icons";
 import { cn } from "../lib/utils";
@@ -69,8 +69,8 @@ export default function ListInput() {
       exit={{ opacity: 0, y: 20, scale: 0.9 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
       className={cn(
-        "p-2 rounded-xl relative w-md bg-neutral-50 shadow-sm ring-1 ring-black/5",
-        "ring-2 ring-blue-400/5 ring-offset-4",
+        "p-2 rounded-xl relative w-md bg-neutral-50 shadow-sm",
+        "dark:bg-neutral-900 dark:ring-white/10",
       )}
     >
       <div className="flex flex-col">
@@ -91,47 +91,51 @@ export default function ListInput() {
             placeholder="New List"
           />
         </div>
-        <div className="flex gap-2 px-2 py-1">
-          {items.map((item, idx) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={idx}
-                onClick={item.onClick}
-                className={cn(
-                  "p-2 cursor-pointer rounded-xl transition-all duration-300 hover:bg-neutral-100",
-                  item.isOpen && "bg-blue-100 hover:bg-blue-200",
-                )}
-              >
-                <Icon className="w-5 h-5" />
-              </div>
-            );
-          })}
-          <AnimatePresence>
-            {colorsOpen && (
-              <div className="bottom-16 absolute left-0">
-                <ColorPicker
-                  selectColor={setSelectedColor}
-                  colorOpen={setColorsOpen}
-                />
-              </div>
+        <div className="flex px-2 py-1 justify-between">
+          <div className="flex gap-2">
+            {items.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={idx}
+                  onClick={item.onClick}
+                  className={cn(
+                    "p-2 cursor-pointer rounded-xl transition-all duration-300 hover:bg-neutral-100 dark:hover:bg-neutral-800",
+                    item.isOpen &&
+                      "bg-blue-100 hover:bg-blue-200 dark:hover:bg-blue-900 dark:bg-blue-800",
+                  )}
+                >
+                  <Icon className="w-5 h-5" />
+                </div>
+              );
+            })}
+            <AnimatePresence>
+              {colorsOpen && (
+                <div className="bottom-16 absolute left-0">
+                  <ColorPicker
+                    selectColor={setSelectedColor}
+                    colorOpen={setColorsOpen}
+                  />
+                </div>
+              )}
+            </AnimatePresence>
+            <AnimatePresence>
+              {iconsOpen && (
+                <div className="bottom-16 absolute left-0">
+                  <IconsPicker
+                    openIcons={setIconsOpen}
+                    selectIcon={setSelectedIcon}
+                  />
+                </div>
+              )}
+            </AnimatePresence>
+          </div>
+          <div
+            className={cn(
+              "p-2 cursor-pointer rounded-xl transition-all duration-300 hover:bg-neutral-100 dark:hover:bg-neutral-800",
             )}
-          </AnimatePresence>
-          <AnimatePresence>
-            {iconsOpen && (
-              <div className="bottom-16 absolute left-0">
-                <IconsPicker
-                  openIcons={setIconsOpen}
-                  selectIcon={setSelectedIcon}
-                />
-              </div>
-            )}
-          </AnimatePresence>
-          <div className="absolute right-3 top-5">
-            <TickIcon
-              className="cursor-pointer w-8 h-8"
-              color="text-blue-400"
-            />
+          >
+            <EnterIcon className="w-5 h-5" />
           </div>
         </div>
       </div>

@@ -51,6 +51,7 @@ export default function ListPicker({
       transition={{ duration: 0.2, ease: "easeInOut" }}
       className={cn(
         "bg-neutral-50 rounded-2xl shadow-sm ring-1 ring-black/5 p-2",
+        "dark:bg-neutral-900 dark:ring-white/10 dark:shadow-xl",
       )}
       onClick={(e) => e.stopPropagation()}
     >
@@ -77,7 +78,7 @@ export default function ListPicker({
                 <div
                   className={cn(
                     "p-2 rounded-xl cursor-pointer w-full flex transition-all duration-400",
-                    colorConfig?.hover,
+                    "hover:bg-neutral-100 dark:hover:bg-neutral-800",
                   )}
                   onClick={() => {
                     openList?.(false);
@@ -106,7 +107,9 @@ export default function ListPicker({
         >
           {filteredLists.length === 0 && (
             <div
-              className="hover:bg-green-200 rounded-xl cursor-pointer w-full flex p-2 transition-all duration-400"
+              className={cn(
+                "hover:bg-neutral-100 rounded-xl cursor-pointer w-full flex p-2 transition-all duration-400 dark:hover:bg-neutral-800, ",
+              )}
               onClick={() => {
                 lists.push({
                   title: searchTerm,
@@ -117,10 +120,15 @@ export default function ListPicker({
               }}
             >
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-green-100 text-green-700 transition-transform">
+                <div
+                  className={cn(
+                    "p-2.5 rounded-xl bg-green-100 text-green-700 transition-transform",
+                    "dark:bg-green-900/50 dark:text-green-400",
+                  )}
+                >
                   <ListIcon className="w-5 h-5" />
                 </div>
-                <div className="text-sm">
+                <div className="text-sm text-neutral-900 dark:text-neutral-100">
                   Create list
                   <span className="ml-1 font-semibold">"{searchTerm}"</span>
                 </div>
@@ -129,7 +137,7 @@ export default function ListPicker({
           )}
         </motion.div>
       </div>
-      <div className="h-px bg-neutral-300"></div>
+      <div className="h-px bg-neutral-300 dark:bg-neutral-700 my-1"></div>
       <div className="p-2 flex">
         <div className="m-2">
           <SearchIcon className="w-5 h-5" />
@@ -137,7 +145,10 @@ export default function ListPicker({
         <input
           ref={inputRef}
           type="text"
-          className="outline-none"
+          className={cn(
+            "outline-none text-neutral-900 placeholder:text-neutral-400",
+            " dark:text-neutral-100 dark:placeholder:text-neutral-500 bg-transparent",
+          )}
           placeholder="Search..."
           onChange={(e) => setSearchTerm(e.target.value)}
           value={searchTerm}

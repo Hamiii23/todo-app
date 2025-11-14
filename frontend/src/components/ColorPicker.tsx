@@ -38,7 +38,7 @@ export default function ColorPicker({
       exit={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
       className={cn(
-        "bg-neutral-50 rounded-2xl shadow-sm ring-1 ring-black/5 p-2",
+        "bg-neutral-50 rounded-2xl shadow-sm ring-1 ring-black/5 p-2 dark:bg-neutral-900",
       )}
     >
       <div
@@ -57,6 +57,7 @@ export default function ColorPicker({
             className={cn(
               "w-6 h-6 rounded-full flex items-center justify-center transition-all",
               "bg-neutral-200 hover:bg-neutral-300",
+              "dark:bg-neutral-700 dark:hover:bg-neutral-800",
               currentPage === 0 &&
                 "opacity-30 cursor-not-allowed hover:bg-neutral-200",
             )}
@@ -76,6 +77,7 @@ export default function ColorPicker({
             className={cn(
               "w-6 h-6 rounded-full flex items-center justify-center transition-all",
               "bg-neutral-200 hover:bg-neutral-300",
+              "dark:bg-neutral-700 dark:hover:bg-neutral-800",
               currentPage === totalPages - 1 &&
                 "opacity-30 cursor-not-allowed hover:bg-neutral-200",
             )}
