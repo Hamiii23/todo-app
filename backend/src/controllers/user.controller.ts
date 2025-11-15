@@ -289,10 +289,7 @@ const updateUser = asyncHandler(async (req, res) => {
     if (!stringValidator.safeParse(validUsername).success) {
       errors.push("Invalid Type: Username must be a string");
     } else if (!usernameRegex.test(validUsername)) {
-      errors.push(
-        400,
-        "username can only contain letters, numbers, '_' and '.'",
-      );
+      errors.push("username can only contain letters, numbers, '_' and '.'");
     } else {
       const existingUsername = await User.findOne({
         username: validUsername,
