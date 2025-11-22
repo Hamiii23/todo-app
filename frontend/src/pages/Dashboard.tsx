@@ -3,18 +3,10 @@ import ThemeSwitcher from "../components/ThemeSwitcher";
 import { cn } from "../lib/utils";
 import TodoInput from "../components/TodoInput";
 import { PlusIcon } from "../lib/Icons";
+import { useTheme } from "../hooks";
 
 export default function Dashboard() {
   const [isAddingTodo, setIsAddingTodo] = useState(false);
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -27,6 +19,8 @@ export default function Dashboard() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isAddingTodo]);
 
+  const { toggleTheme } = useTheme();
+
   return (
     <div
       className={cn(
@@ -34,7 +28,7 @@ export default function Dashboard() {
         "dark:bg-neutral-950 dark:text-neutral-50",
       )}
     >
-      <ThemeSwitcher />
+      <ThemeSwitcher toggleTheme={toggleTheme} />
       <div className="absolute bottom-6">
         {isAddingTodo ? (
           <div>

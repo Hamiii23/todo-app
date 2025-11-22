@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "../components/Button";
 import { InputBox } from "../components/InputBox";
 import Orb from "../components/Orb";
@@ -20,6 +20,7 @@ import {
   usernameRules,
 } from "../lib";
 import ThemeSwitcher from "../components/ThemeSwitcher";
+import { useTheme } from "../hooks";
 
 export default function Home() {
   const tabs: Tab[] = [
@@ -39,14 +40,7 @@ export default function Home() {
     password: "",
   });
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
+  const { toggleTheme } = useTheme();
 
   return (
     <div className={cn("grid grid-cols-12 gap-2", "dark:bg-neutral-950")}>
@@ -235,7 +229,7 @@ export default function Home() {
             Your tasks, goals, and priorities — all in one simple place
           </h2>
         </div>
-        <ThemeSwitcher />
+        <ThemeSwitcher toggleTheme={toggleTheme} />
       </div>
     </div>
   );

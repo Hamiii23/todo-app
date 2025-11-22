@@ -59,16 +59,6 @@ export async function checkEmailAvailability(email: string) {
   }
 }
 
-export function handleThemeChange() {
-  document.documentElement.classList.toggle("dark");
-
-  const newTheme = document.documentElement.classList.contains("dark")
-    ? "dark"
-    : "light";
-
-  localStorage.setItem("theme", newTheme);
-}
-
 export const emailRules: ValidationRule[] = [
   {
     test: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),

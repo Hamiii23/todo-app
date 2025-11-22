@@ -1,12 +1,15 @@
-import { handleThemeChange } from "../lib";
 import { MoonIcon, SunIcon } from "../lib/Icons";
 import { cn } from "../lib/utils";
 
-export default function ThemeSwitcher() {
+export default function ThemeSwitcher({
+  toggleTheme,
+}: {
+  toggleTheme: () => void;
+}) {
   return (
     <div>
       <div
-        onClick={handleThemeChange}
+        onClick={toggleTheme}
         className={cn(
           "absolute top-4 right-4 border-gray-300 border-2 p-1 rounded-xl cursor-pointer",
           "transition-all duration-500 ease-in-out",
@@ -17,7 +20,7 @@ export default function ThemeSwitcher() {
         <SunIcon />
       </div>
       <div
-        onClick={handleThemeChange}
+        onClick={toggleTheme}
         className={cn(
           "absolute top-4 right-4 border-gray-300 border-2 p-1 rounded-xl cursor-pointer",
           "transition-all duration-500 ease-in-out",

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "../lib/utils";
-import { useDebounce } from "../lib/useDebounce";
 import { motion, AnimatePresence } from "motion/react";
+import { useDebounce } from "../hooks";
 
 export type ValidationRule = {
   test: (value: string) => boolean;
@@ -116,7 +116,7 @@ export function InputBox({
             type={type}
             placeholder={placeholder}
             className={cn(
-              "outline-none bg-transparent text-sm dark:placeholder:text-neutral-400 dark:text-neutral-100",
+              "outline-none bg-transparent text-sm dark:placeholder:text-neutral-400 dark:text-neutral-100 w-full",
             )}
           />
         </div>
