@@ -9,6 +9,12 @@ import {
   passwordValidator,
   stringValidator,
 } from "../utils/typeValidation";
+import {
+  normalizedUsername,
+  normalizedEmail,
+  checkUsernameFormat,
+  checkUserExists,
+} from "../utils/userValidation";
 
 const generateTokens = async (userID: mongoose.Types.ObjectId) => {
   try {
@@ -36,8 +42,8 @@ const options = {
 const registerUser = asyncHandler(async (req, res) => {
   const { name, username, email, password } = req.body;
 
-  const validUsername = username ? username.toLowerCase().trim() : undefined;
-  const validEmail = email ? email.toLowerCase().trim() : undefined;
+  const validUsername = normalizedUsername(username);
+  const validEmail = normalizedEmail(email);
 
   const errors: string[] = [];
 
@@ -73,18 +79,15 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   //verifies if the username is in valid format
-  const usernameRegex = /^[a-zA-Z0-9_.]+$/;
+  const usernameFormatError = checkUsernameFormat(validUsername);
 
-  if (!usernameRegex.test(username)) {
-    throw new ApiError(
-      400,
-      "username can only contain letters, numbers, '_' and '.'",
-    );
+  if (usernameFormatError) {
+    throw new ApiError(400, usernameFormatError);
   }
-  const existingUser = await User.findOne({
-    $or: [{ username: validUsername }, { email: validEmail }],
+  const existingUser = await checkUserExists({
+    username: validUsername,
+    email: validEmail,
   });
-
   if (existingUser) {
     throw new ApiError(409, "Username/Email already exists");
   }
@@ -152,8 +155,8 @@ const registerUser = asyncHandler(async (req, res) => {
 const logInUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
-  const validEmail = email ? email.toLowerCase().trim() : undefined;
-  const validUsername = username ? username.toLowerCase().trim() : undefined;
+  const validEmail = normalizedEmail(email);
+  const validUsername = normalizedUsername(username);
 
   if (!(username || email)) {
     throw new ApiError(400, "Email or Username is required");
@@ -185,8 +188,9 @@ const logInUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, errors.join("; "));
   }
 
-  const user = (await User.findOne({
-    $or: [{ username: validUsername }, { email: validEmail }],
+  const user = (await checkUserExists({
+    username: validUsername,
+    email: validEmail,
   })) as any;
 
   if (!user) {
@@ -255,8 +259,8 @@ const logOutUser = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
   const { username, email, name } = req.body;
 
-  const validEmail = email ? email.toLowerCase().trim() : undefined;
-  const validUsername = username ? username.toLowerCase().trim() : undefined;
+  const validEmail = normalizedEmail(email);
+  const validUsername = normalizedUsername(username);
 
   const user = req.user;
 
@@ -270,9 +274,9 @@ const updateUser = asyncHandler(async (req, res) => {
         "Invalid Type: Email should be in a string and in a proper format",
       );
     } else {
-      const existingEmail = await User.findOne({
+      const existingEmail = await checkUserExists({
         email: validEmail,
-        _id: { $ne: user._id },
+        excludeUserId: user._id,
       });
       //if it's a valid email set it as the updated email
       if (existingEmail) {
@@ -284,16 +288,16 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 
   if (username) {
-    const usernameRegex = /^[a-zA-Z0-9_.]+$/;
+    const usernameFormatError = checkUsernameFormat(validUsername);
 
     if (!stringValidator.safeParse(validUsername).success) {
       errors.push("Invalid Type: Username must be a string");
-    } else if (!usernameRegex.test(validUsername)) {
+    } else if (usernameFormatError) {
       errors.push("username can only contain letters, numbers, '_' and '.'");
     } else {
-      const existingUsername = await User.findOne({
+      const existingUsername = await checkUserExists({
         username: validUsername,
-        _id: { $ne: user._id },
+        excludeUserId: user._id,
       });
       if (existingUsername) {
         errors.push("Username is already taken by another user");
@@ -379,8 +383,8 @@ const checkUsernameAndEmail = asyncHandler(async (req, res) => {
   const { username, email } = req.query;
 
   if (username) {
-    const usernameCheck = await User.findOne({
-      username: username.toString().toLowerCase(),
+    const usernameCheck = await checkUserExists({
+      username: username.toString(),
     });
 
     if (!usernameCheck) {
@@ -391,8 +395,8 @@ const checkUsernameAndEmail = asyncHandler(async (req, res) => {
   }
 
   if (email) {
-    const emailCheck = await User.findOne({
-      email: email.toString().toLowerCase(),
+    const emailCheck = await checkUserExists({
+      email: email.toString(),
     });
 
     if (!emailCheck) {
